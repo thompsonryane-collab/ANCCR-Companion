@@ -1,0 +1,15 @@
+{
+  "name": "ANCCR AI Companion",
+  "short_name": "ANCCR AI",
+  "description": "Client-facing companion to the ANCCRai hub: learn the tiles, trace the sample data, follow the strategy.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e1824",
+  "theme_color": "#0e1824",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
