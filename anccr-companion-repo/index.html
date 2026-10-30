@@ -8,9 +8,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ANCCR AI">
 <meta name="theme-color" content="#0e1824">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="assets/icon-180.png">
-<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
 <title>ANCCR AI Companion — learn the hub, trace the data</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -107,7 +104,7 @@ p{margin:6px 0;color:var(--tx)}
 .sh-title{font-family:var(--raj);font-weight:700;font-size:20px;line-height:1.1;color:var(--txh)}
 .sh-sub{font-family:var(--mono);font-size:11px;color:var(--txf);margin-top:2px}
 .sh-close{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--pill);display:grid;place-items:center;color:var(--txd);font-size:17px}
-.seg{display:flex;gap:4px;margin:4px 18px 10px;padding:3px;border-radius:12px;background:var(--pill)}
+.seg{display:flex;gap:2px;margin:4px 14px 10px;padding:3px;border-radius:12px;background:var(--pill)}
 .seg button{flex:1;padding:7px 4px;border-radius:9px;font-family:var(--raj);font-weight:600;font-size:13.5px;color:var(--txd);white-space:nowrap}
 .seg button[aria-selected="true"]{background:var(--card);color:var(--txh);box-shadow:0 1px 4px rgba(0,0,0,.25)}
 .sh-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 18px calc(var(--sab) + 28px)}
@@ -181,7 +178,7 @@ canvas{width:100%;height:120px;display:block;border-radius:12px;background:var(-
 #tabs button[aria-current="page"]{color:var(--amber)}
 .toast{position:absolute;left:50%;top:calc(var(--sat) + 56px);transform:translate(-50%,-12px);z-index:40;padding:9px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border2);font-family:var(--mono);font-size:12px;color:var(--txh);opacity:0;pointer-events:none;transition:all .25s}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-/* strategy tile */
+/* strategy tile and dictionary cross-link */
 .bars{margin:10px 0}
 .bar{display:grid;grid-template-columns:118px 1fr 40px;gap:8px;align-items:center;margin:7px 0;font-size:13.5px}
 .bar .trk{height:10px;border-radius:5px;background:var(--pill);overflow:hidden}
@@ -221,17 +218,31 @@ details.card .bd p{margin:4px 0}
 .act{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start;font-size:14.5px}
 .act input{width:22px;height:22px;accent-color:var(--sage);margin-top:1px}
 .act .o{display:block;font-family:var(--mono);font-size:11px;color:var(--txf);margin-top:3px}
-.sec{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin:10px 0 6px;border-radius:14px;background:var(--card);border:1px solid var(--border);font-family:var(--raj);font-weight:700;font-size:17px;color:var(--txh)}
-.sec .ct{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:normal;color:var(--txf)}
-.sec .tg{flex:none;width:24px;height:24px;border-radius:7px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:16px;line-height:24px;text-align:center;transition:transform .2s var(--ease)}
+.sec{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin:14px 0 0;border-radius:14px;background:var(--card);border:1px solid var(--border);border-left:4px solid var(--c,var(--amber));font-family:var(--raj);font-weight:700;font-size:17px;color:var(--txh)}
+.sec:first-of-type{margin-top:6px}
+.sec .ct{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:normal;color:var(--c,var(--txf))}
+.sec .tg{flex:none;width:24px;height:24px;border-radius:7px;background:var(--pill);color:var(--c,var(--amber));font-family:var(--mono);font-size:16px;line-height:24px;text-align:center;transition:transform .2s var(--ease)}
 .sec[aria-expanded="true"] .tg{transform:rotate(90deg)}
-.sec-bd{padding:0 2px 6px}
+.sec[aria-expanded="true"]{border-bottom-left-radius:0;border-bottom-right-radius:0}
+.sec-bd{padding:10px 12px 14px;margin:0 0 4px;border:1px solid var(--border);border-top:0;border-left:4px solid var(--c,var(--amber));border-radius:0 0 14px 14px;background:color-mix(in srgb,var(--card) 55%,transparent)}
+.sec-bd > .dd-letter:first-child{margin-top:0}
+.sec-bd .prog{margin-top:0}
+.sec-bd > .risk:first-child{margin-top:0}
+.sec-bd .steps{margin-top:0}
 .act.done{opacity:.55;text-decoration:line-through}
 .prog{height:6px;border-radius:3px;background:var(--pill);margin:8px 0 2px;overflow:hidden}
 .prog i{display:block;height:100%;background:var(--sage);transition:width .4s var(--ease)}
-.risk{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px 12px;margin:8px 0;border-radius:12px;background:var(--card);border:1px solid var(--border);font-size:14.5px}
-.risk .m{font-size:13.5px;color:var(--txd);grid-column:1/-1}
-.risk .lv{display:flex;gap:4px;align-items:flex-start}
+.risk{margin:8px 0;border-radius:12px;background:var(--card);border:1px solid var(--border);overflow:hidden}
+.risk > button{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;padding:11px 12px}
+.risk .sv{flex:none;width:10px;height:10px;border-radius:50%;margin-top:6px;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 25%,transparent);background:var(--c)}
+.risk .rt{font-weight:600;color:var(--txh);font-size:15px;line-height:1.25}
+.risk .rl{font-family:var(--mono);font-size:10.5px;color:var(--txf);margin-top:3px}
+.risk .rl b{font-weight:normal;color:var(--c)}
+.risk .tg{flex:none;margin-left:auto;width:22px;height:22px;border-radius:7px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:15px;line-height:22px;text-align:center;transition:transform .2s var(--ease)}
+.risk > button[aria-expanded="true"] .tg{transform:rotate(90deg)}
+.risk .bd{padding:0 12px 12px 32px;font-size:14px;color:var(--tx)}
+.risk .bd .lv{display:flex;gap:6px;margin:4px 0 8px}
+.risk .bd .mt{font-family:var(--mono);font-size:10.5px;color:var(--txf);margin-bottom:2px}
 /* mind map */
 .mm-bar{position:sticky;top:-4px;z-index:3;display:flex;gap:6px;align-items:center;margin:0 -18px 10px;padding:10px 18px;background:color-mix(in srgb,var(--sheet) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
 .mm-bar button{padding:7px 12px;border-radius:999px;background:var(--pill);font-family:var(--raj);font-weight:600;font-size:13px;color:var(--txh)}
@@ -253,7 +264,75 @@ details.card .bd p{margin:4px 0}
 .mm .root{font-family:var(--raj);font-weight:700;font-size:17px;color:var(--txh);padding:10px 12px;border-radius:12px;background:var(--sheet2);border:1px solid var(--border);margin-bottom:6px}
 .seg{overflow-x:auto;scrollbar-width:none}
 .seg::-webkit-scrollbar{display:none}
-.seg button{min-width:64px;font-size:12.5px;padding:7px 6px}
+.seg button{flex:1 1 0;min-width:0;font-size:12.5px;padding:8px 4px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border-bottom:3px solid transparent;border-radius:9px 9px 6px 6px;white-space:nowrap;letter-spacing:-.01em}
+.seg button.seg-ico{flex:0 0 auto;min-width:38px;padding:8px 6px}
+.seg button.end{order:9;flex:0 0 auto;min-width:48px}
+.seg-search{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:6px;padding:0 10px;border-radius:9px;background:var(--card);border:1px solid var(--border)}
+.seg-search input{flex:1;min-width:0;background:none;border:0;padding:8px 0;font:inherit;font-size:15px;color:var(--txh);outline:none}
+.seg-search input::placeholder{color:var(--txf)}
+.seg-search button{color:var(--txf);font-size:13px;padding:4px}
+.seg-search:focus-within{border-color:var(--amber)}
+.seg button[aria-selected="true"]{border-bottom-color:var(--c,var(--amber))}
+.seg button[data-i]{color:color-mix(in srgb,var(--c,var(--txd)) 70%,var(--txd))}
+.seg button[data-i][aria-selected="true"]{color:var(--txh)}
+.seg button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.seg button svg.big{width:24px;height:24px;stroke-width:1.9}
+.seg button.seg-ico svg{width:24px;height:24px;stroke-width:1.9}
+.seg button.seg-ico .az{font-family:var(--mono);font-size:9.5px;fill:currentColor;stroke:none}
+.seg button.seg-ico{flex:none;min-width:40px;position:relative;color:var(--amber)}
+.seg button.seg-ico .n{position:absolute;top:2px;right:4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--amber);color:#1a1200;font-family:var(--mono);font-size:10px;line-height:16px;text-align:center}
+#dd-pop{position:absolute;left:12px;right:12px;top:0;z-index:30;background:var(--sheet);border:1px solid var(--border2);border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.5);padding:12px 14px calc(var(--sab) + 14px);display:none;max-height:72%;overflow-y:auto}
+#sheet.filt #dd-pop{display:block}
+#dd-pop h4{font-family:var(--raj);font-weight:700;font-size:15px;color:var(--txh);margin:8px 0 6px;display:flex;align-items:center}
+#dd-pop h4 button{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--cyan);padding:4px 8px;border-radius:999px;background:var(--pill)}
+#dd-pop h4 button[aria-pressed="true"]{background:var(--cyan);color:#021018}
+.ms{display:flex;flex-wrap:wrap;gap:6px}
+.ms button{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:var(--pill);border:1px solid var(--border);font-family:var(--raj);font-weight:600;font-size:13.5px;color:var(--txd)}
+.ms button[aria-pressed="true"]{background:var(--card);border-color:var(--amber);color:var(--txh)}
+.ms button i{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--border2);display:grid;place-items:center;font-style:normal;font-size:11px;color:#1a1200}
+.ms button[aria-pressed="true"] i{background:var(--amber);border-color:var(--amber)}
+.pop-done{display:flex;gap:8px;margin-top:12px}
+.pop-done button{flex:1;padding:10px;border-radius:12px;font-family:var(--raj);font-weight:700;font-size:15px}
+.pop-done .ok{background:var(--amber);color:#1a1200}
+.pop-done .rs{background:var(--pill);color:var(--txd)}
+/* data dictionary */
+.dd-bar{position:sticky;top:-4px;z-index:3;margin:0 -18px 10px;padding:8px 18px 10px;background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.dd-q{display:flex;align-items:center;gap:8px;padding:0 12px;border-radius:12px;background:var(--pill);border:1px solid var(--border)}
+.dd-q input{flex:1;background:none;border:0;padding:10px 0;font:inherit;font-size:16px;color:var(--txh);outline:none}
+.dd-q input::placeholder{color:var(--txf)}
+.dd-q button{color:var(--txf);font-size:15px;padding:4px}
+.dd-row{display:flex;gap:6px;margin-top:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.dd-row::-webkit-scrollbar{display:none}
+.dd-row button{flex:none;padding:6px 11px;border-radius:999px;background:var(--pill);font-family:var(--raj);font-weight:600;font-size:13px;color:var(--txd);white-space:nowrap}
+.dd-row button[aria-pressed="true"]{background:var(--txh);color:var(--void)}
+.dd-row button:disabled{opacity:.3}
+.dd-az{flex:none;width:44px;height:40px;border-radius:12px;background:var(--pill);border:1px solid var(--border);display:grid;place-items:center;color:var(--amber)}
+.dd-az svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.dd-az .az{font-family:var(--mono);font-size:9.5px;fill:currentColor;stroke:none}
+.dd-top{display:flex;gap:8px;align-items:center}
+.dd-top .dd-q{flex:1}
+.dd-cnt{font-family:var(--mono);font-size:11px;color:var(--txf);margin-top:8px}
+.dd-letter{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:var(--dsp);font-weight:700;font-size:22px;color:var(--amber);margin:12px 0 4px;padding:8px 2px 8px 4px;border-bottom:1px solid var(--border)}
+.dd-letter .ct{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--txf)}
+.dd-letter .tg{flex:none;width:26px;height:26px;border-radius:8px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:17px;line-height:26px;text-align:center;transition:transform .2s var(--ease)}
+.dd-letter[aria-expanded="true"] .tg{transform:rotate(90deg)}
+.dd-letter.sp{font-family:var(--raj);font-size:19px;color:var(--c,var(--amber));border-bottom-color:color-mix(in srgb,var(--c,var(--amber)) 35%,transparent)}
+.dd-letter.sp .tg{color:var(--c,var(--amber))}
+.dd-letter.sp + .act{margin-top:2px}
+.dd-letter.sp .wk{font-family:var(--mono);font-size:11px;font-weight:normal;color:var(--txf);margin-left:2px}
+.dd-e{margin:6px 0;border-radius:12px;background:var(--card);border:1px solid var(--border);overflow:hidden}
+.dd-e > button{display:flex;align-items:flex-start;gap:8px;width:100%;text-align:left;padding:10px 12px}
+.dd-e .nm{font-weight:700;color:var(--txh);font-size:15px;line-height:1.2}
+.dd-e .mt{font-family:var(--mono);font-size:10.5px;color:var(--txf);margin-top:3px}
+.dd-e .kd{flex:none;padding:2px 7px;border-radius:999px;font-family:var(--mono);font-size:10px;margin-top:2px}
+.dd-e .kd.field{background:var(--pill);color:var(--cyan)} .dd-e .kd.metric{background:var(--pill);color:var(--amber)} .dd-e .kd.term{background:var(--pill);color:var(--sage)}
+.dd-e .tg{flex:none;margin-left:auto;width:22px;height:22px;border-radius:7px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:15px;line-height:22px;text-align:center;transition:transform .2s var(--ease)}
+.dd-e > button[aria-expanded="true"] .tg{transform:rotate(90deg)}
+.dd-e .bd{padding:0 12px 12px;font-size:14px;color:var(--tx)}
+.dd-e .bd p{margin:4px 0}
+.dd-e .bd .formula{margin-top:8px}
+.dd-tiles{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.dd-tiles button{padding:3px 9px;border-radius:999px;background:var(--pill);font-family:var(--mono);font-size:10.5px;color:var(--cyan)}
 @media (prefers-reduced-motion: reduce){ *{transition-duration:.01ms !important;animation:none !important} }
 </style>
 </head>
@@ -282,6 +361,7 @@ details.card .bd p{margin:4px 0}
     <div class="grab"></div>
     <div class="sh-head"><div class="ico" id="sh-ico"></div><div><div class="sh-title" id="sh-t"></div><div class="sh-sub" id="sh-s"></div></div><button class="sh-close" id="sh-x" aria-label="Close">✕</button></div>
     <div class="seg" id="sh-seg" role="tablist"></div>
+    <div id="dd-pop" role="dialog" aria-label="Dictionary filters"></div>
     <div class="sh-body" id="sh-b"></div>
     <button id="sh-top" aria-label="Scroll to top"><svg viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></svg></button>
   </div>
@@ -307,13 +387,15 @@ var ICONS={
  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
  dataset:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/><path d="M15.5 14.5l2 2"/>',
  strategy:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/><path d="M12 3v2M21 12h-2M12 21v-2M3 12h2"/>',
- learn:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h5"/>'
+ learn:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h5"/>',
+ dictionary:'<path d="M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h12"/><path d="M8 8h6M8 11h4"/>'
 };
 /* ─────────── tiles — v1.7 template plus ACR-14 ─────────── */
 var TILES=[
  {id:'learn',code:'ACR-16',label:'Learn the hub',g:['#4db88a','#1e7a52']},
  {id:'dataset',code:'ACR-14',label:'Sample Dataset',g:['#f0b860','#a86a1c'],ring:true},
  {id:'strategy',code:'ACR-15',label:'Strategy',g:['#a07cf0','#5a3aa8']},
+ {id:'dictionary',code:'ACR-17',label:'Data Dictionary',g:['#3ed6ff','#0f6f99']},
  {id:'ai',code:'AI-01',label:'ANCCR Analyst',g:['#f0b860','#a86a1c']},
  {id:'portfolio',code:'ACR-01',label:'Portfolio Command',g:['#5fa8ff','#2456c7']},
  {id:'anomaly',code:'ACR-04',label:'Bill Sentinel',g:['#ff6b6b','#b32626'],badge:'6'},
@@ -371,7 +453,7 @@ function dvRender(){
 document.addEventListener('click',function(e){var t;
  if(t=e.target.closest('[data-ds]')){ DV.key=t.dataset.ds; DV.mode='schema'; DV.back=shB.innerHTML; shB.innerHTML=dvRender(); shB.scrollTop=0; buzz(); }
  else if(t=e.target.closest('[data-dsmode]')){ DV.mode=t.dataset.dsmode; shB.innerHTML=dvRender(); }
- else if(t=e.target.closest('[data-dsback]')){ if(DV.back!=null){ shB.innerHTML=DV.back; DV.back=null; } shB.scrollTop=0; }
+ else if(t=e.target.closest('[data-dsback]')){ if(DV.back!=null){ shB.innerHTML=DV.back; DV.back=null; } shB.scrollTop=0; if(CUR&&CUR.id==='dictionary') wireDD(); }
 });
 var COPY={
  ai:{sub:'Ask across every module',
@@ -553,7 +635,7 @@ var ST={
  risks:[['Interim feed becomes permanent and the Databricks path stalls','High','Medium','Start J-Intake now; time-box the interim path in the ingestion contract; report intake status at each review'],['Validation reveals curated EDW fields lose fidelity needed for re-rating','Medium','High','Compare Maximo raw against EDW on the Yorktown sample before expanding'],['Scope creep as more stakeholders see the hub','High','Medium','Freeze features at v1.7 plus relay and toggles until acceptance tests pass; keep a parked-ideas list'],['Sensitive-data rules block any hosted deployment','Medium','High','Carry the client-side architecture as an option; document the controls already in place'],['Rate-pressure metric is questioned before methodology is agreed','Medium','Medium','Label as indicative in v1.9; keep behind the advanced toggle until sign-off'],['Single-person dependency on data exports','Medium','Medium','Credentials to Segar; written runbook for the export'],['Artifact sharing friction slows feedback','High','Low','Fix the channel this week; fall back to file hand-off']],
  questions:['Who owns the Yorktown three-year dataset, and does it include gas, water and sewer as well as electric interval data?','Is the interim feed expected to refresh during validation, or is a one-time static load acceptable until the Databricks path exists?','Which of the five personas on the entry screen correspond to real roles in PW6 and the FECs, and which data grain should each see by default?','What is the working definition of “rate pressure”, and which of EIA, S&P and transmission data count as authoritative for it?','Who is the target owner-administrator at hand-off, and does that person need a no-code admin surface?','Is Jupyter a hosting option in its own right or a route to running the relay inside the enclave?','Which Tableau dashboards are in daily use today, and by whom? That list defines the minimum viable release.']
 };
-var SST={topic:'all',gap:'all',sprint:0,sel:null,done:{},sec:{}};
+var SST={topic:'all',gap:'all',sprint:0,sel:null,done:{},sec:{},sp:{},rk:{}};
 try{SST.done=JSON.parse(localStorage.getItem('anccr-actions')||'{}')||{};}catch(e){SST.done={};}
 function stSummary(){
  var bars=ST.ready.map(function(r){var c=r[1]>=70?'var(--sage)':r[1]>=40?'var(--amber)':'var(--red)';return '<div class="bar"><span>'+r[0]+'</span><div class="trk"><div class="fil" data-w="'+r[1]+'" style="background:'+c+'"></div></div><span class="pct">'+r[1]+'%</span></div>';}).join('');
@@ -588,13 +670,14 @@ function stPlan(){
 }
 function stActions(){
  var done=0; ST.actions.forEach(function(a,i){if(SST.done[i])done++;});
- var f='<div class="filt">'+[[0,'All'],[1,'Sprint 1'],[2,'Sprint 2'],[3,'Sprint 3+']].map(function(t){return '<button data-af="'+t[0]+'" aria-pressed="'+((SST.af||0)===t[0])+'">'+t[1]+'</button>';}).join('')+'</div>';
- var list=ST.actions.map(function(a,i){ if((SST.af||0)&&a[2]!==SST.af) return ''; return '<label class="act'+(SST.done[i]?' done':'')+'"><input type="checkbox" data-ai="'+i+'"'+(SST.done[i]?' checked':'')+'><span>'+a[0]+'<span class="o">'+a[1]+' · sprint '+a[2]+'</span></span></label>';}).join('');
- var sec=function(id,title,count,body){var o=!!SST.sec[id];return '<button class="sec" data-sec="'+id+'" aria-expanded="'+o+'"><span class="tg">›</span><span>'+title+'</span><span class="ct">'+count+'</span></button>'+(o?'<div class="sec-bd">'+body+'</div>':'');};
+ var sprintsDef=[[1,'Sprint 1','weeks 0–2','#2e9a63'],[2,'Sprint 2','weeks 2–6','#1f8fc9'],[3,'Sprint 3+','weeks 6–12','#7a56c9']];
+ var list=sprintsDef.map(function(sp){ var items=ST.actions.map(function(a,i){return [a,i];}).filter(function(x){return x[0][2]===sp[0];}); var dn=items.filter(function(x){return SST.done[x[1]];}).length; var open=!!SST.sp[sp[0]];
+  return '<button class="dd-letter sp" style="--c:'+sp[3]+'" data-sp2="'+sp[0]+'" aria-expanded="'+open+'"><span class="tg">›</span><span>'+sp[1]+'</span><span class="wk">'+sp[2]+'</span><span class="ct">'+dn+' of '+items.length+' done</span></button>'+(open?items.map(function(x){var a=x[0],i=x[1];return '<label class="act'+(SST.done[i]?' done':'')+'"><input type="checkbox" data-ai="'+i+'"'+(SST.done[i]?' checked':'')+'><span>'+a[0]+'<span class="o">'+a[1]+'</span></span></label>';}).join(''):''); }).join('');
+ var sec=function(id,title,count,body,c){var o=!!SST.sec[id];return '<button class="sec" style="--c:'+c+'" data-sec="'+id+'" aria-expanded="'+o+'"><span class="tg">›</span><span>'+title+'</span><span class="ct">'+count+'</span></button>'+(o?'<div class="sec-bd" style="--c:'+c+'">'+body+'</div>':'');};
  return '<p>Merged from the meeting’s arrangements and suggestions, duplicates collapsed. Owners are proposed where the notes imply them. Ticks are kept on this device only.</p>'+
- sec('acts','Action register',done+' of '+ST.actions.length+' done','<div class="prog"><i style="width:'+(done/ST.actions.length*100)+'%"></i></div>'+f+list)+
- sec('risks','Risks',ST.risks.length,ST.risks.map(function(r){var lv=function(v){return '<span class="chip '+(v==='High'?'gap':v==='Medium'?'partial':'have')+'">'+v+'</span>';};return '<div class="risk"><span>'+r[0]+'</span><span class="lv">'+lv(r[1])+lv(r[2])+'</span><span class="m">'+r[3]+'</span></div>';}).join('')+'<p class="mini">chips: likelihood · impact</p>')+
- sec('qs','Open questions',ST.questions.length,'<ol class="steps">'+ST.questions.map(function(q){return '<li>'+q+'</li>';}).join('')+'</ol>');
+ sec('acts','Action register',done+' of '+ST.actions.length+' done','<div class="prog"><i style="width:'+(done/ST.actions.length*100)+'%"></i></div>'+list,'var(--sage)')+
+ sec('risks','Risks',ST.risks.length,ST.risks.map(function(r,i){var sc={High:3,Medium:2,Low:1};var s=sc[r[1]]*sc[r[2]];var c=s>=6?'var(--red)':s>=3?'var(--amber)':'var(--sage)';var sev=s>=6?'severe':s>=3?'moderate':'low';var lv=function(v){return '<span class="chip '+(v==='High'?'gap':v==='Medium'?'partial':'have')+'">'+v+'</span>';};var o=!!SST.rk[i];return '<div class="risk" style="--c:'+c+'"><button data-rk="'+i+'" aria-expanded="'+o+'"><span class="sv"></span><span><div class="rt">'+r[0]+'</div><div class="rl"><b>'+sev+'</b> · likelihood '+r[1].toLowerCase()+' · impact '+r[2].toLowerCase()+'</div></span><span class="tg">›</span></button>'+(o?'<div class="bd"><div class="lv">'+lv(r[1])+lv(r[2])+'</div><div class="mt">mitigation</div>'+r[3]+'</div>':'')+'</div>';}).join('')+'<p class="mini">severity = likelihood × impact · red severe, amber moderate, green low</p>','var(--red)')+
+ sec('qs','Open questions',ST.questions.length,'<ol class="steps">'+ST.questions.map(function(q){return '<li>'+q+'</li>';}).join('')+'</ol>','var(--amber)');
 }
 function wireST(){
  var b=shB;
@@ -602,7 +685,8 @@ function wireST(){
  b.onclick=function(e){var t;
   if(t=e.target.closest('[data-tf]')){SST.topic=t.dataset.tf;show(stMeeting);}
   else if(t=e.target.closest('[data-gf]')){SST.gap=t.dataset.gf;show(stGaps);}
-  else if(t=e.target.closest('[data-af]')){SST.af=+t.dataset.af;show(stActions);}
+  else if(t=e.target.closest('[data-rk]')){var rk=t.dataset.rk;if(SST.rk[rk])delete SST.rk[rk];else SST.rk[rk]=1;show(stActions);buzz();}
+  else if(t=e.target.closest('[data-sp2]')){var sp=t.dataset.sp2;if(SST.sp[sp])delete SST.sp[sp];else SST.sp[sp]=1;show(stActions);buzz();}
   else if(t=e.target.closest('[data-sp]')){SST.sprint=+t.dataset.sp;show(stPlan);}
   else if(t=e.target.closest('[data-sec]')){var sid=t.dataset.sec;if(SST.sec[sid])delete SST.sec[sid];else SST.sec[sid]=1;show(stActions);buzz();}
   else if(t=e.target.closest('[data-mm]')){var id=t.dataset.mm;if(MMX[id])delete MMX[id];else MMX[id]=1;show(stMind);buzz();}
@@ -660,6 +744,140 @@ var ASKSEL=null;
 function aiAsk(){return '<p>These are the questions stakeholders asked in the 29 October session. Tap one to see how the analyst answers and which module the answer comes from.</p>'+QS.map(function(q,i){return '<button class="q" data-q="'+i+'">'+q[0]+'<small>'+q[1]+'</small></button>'+(ASKSEL===i?'<div class="ans"><div class="who">ANCCR Analyst · answered from '+q[3].toUpperCase()+'</div>'+q[2]+'<button class="q" style="margin:10px 0 0" data-open="'+q[3]+'">Open the module behind this answer</button></div>':'');}).join('');}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-q]');if(!b)return;var i=+b.dataset.q;ASKSEL=(ASKSEL===i)?null:i;var keep=shB.scrollTop;shB.innerHTML=aiAsk();shB.scrollTop=keep;buzz();});
 
+/* ─────────── data dictionary: fields, metrics and terms in one index ─────────── */
+var DD_METRICS=[
+ ['Anomaly score','metric','0–1 likelihood that a bill is wrong, from four signals combined so one strong signal is enough.','score = 0.75·max(signals) + 0.25·mean(signals)\nsignals: rate, units, demand, variance → each squashed to 0..1\nsquash(z) = 1 − exp(−max(0, z − 2.2) / 2.5)\nflagged when score ≥ 0.35','0–1',['anomaly','ledger','ai']],
+ ['Rate signal (z_rate)','metric','How far this bill’s unit rate sits from the account’s own history, in robust standard units.','z_rate = |rate − median(rates)| / MAD(rates)','z',['anomaly']],
+ ['Units signal (z_units)','metric','Consumption deviation after removing season or weather.','z_units = |deseasonalised units − median| / MAD\nor, with a weather model (R² ≥ 0.5): |ratio − median(ratio)| / max(MAD, 0.03)','z',['anomaly','forecast']],
+ ['Demand signal (z_demand)','metric','Billed kW deviation from the account’s history.','z_demand = |kW − median(kW)| / MAD(kW)','z',['anomaly','dr']],
+ ['Variance signal (z_variance)','metric','Gap between what was billed and what the tariff says it should be, scaled so 4% is one unit.','variance = (billed − re-rated) / re-rated\nz_variance = |variance| / 0.04','z',['anomaly','tariff']],
+ ['Hypothesis','metric','The plain-language reason attached to a flagged bill, chosen from the strongest signal and the sign of the variance.','variance > 0.5 → likely duplicate\nunits strong, variance small → meter multiplier or read\ndemand strong → demand spike, check ratchet\nvariance > 0 → billed above tariff\nvariance < 0 → estimated or partial read','text',['anomaly']],
+ ['Effective rate','metric','What the installation actually paid per unit over a period.','effective rate = cost ÷ units (trailing twelve months unless stated)','USD per unit',['portfolio','map','anomaly']],
+ ['Benchmark gap','metric','Effective rate against the state commercial average from EIA.','gap = effective ÷ benchmark − 1\ngap in dollars = (effective − benchmark) × units','%, USD',['map','ai']],
+ ['Rate-pressure index','metric','0–100 score of how much upward pressure a service territory is under.','pending = Σ estimated % of open and future-effective rate cases → clamp(pending/10%) × 35\nyoy = TTM rate ÷ prior-12 rate − 1 → clamp((yoy+2%)/10%) × 25\nvolatility = stdev(monthly log changes) × √12 → clamp(vol/28%) × 20\nmarket = EIA price now ÷ 13 months ago − 1 → scaled × 20\nindex = sum of the four','0–100',['map']],
+ ['Weather-normalised units','metric','Consumption adjusted to normal weather so a cold winter is not mistaken for a billing error.','fit units = a + b·HDD + c·CDD over history\nnormalised = units − b·(HDD − normal HDD) − c·(CDD − normal CDD)','units',['forecast','anomaly']],
+ ['Weather share','metric','Portion of a month’s deviation that weather explains.','share = (units − normalised units) ÷ units','%',['anomaly']],
+ ['Re-rated bill','metric','What the bill should have been under a given tariff.','expected = customer charge + Σ energy blocks + max(kW, ratchet × 12-month peak) × demand rate + Σ TOU periods + Σ riders','USD',['tariff','anomaly']],
+ ['Best-fit tariff','metric','The eligible schedule with the lowest re-rated total over twelve months.','best fit = argmin over eligible tariffs of Σ re-rated bills (12 months)','tariff',['tariff','ai']],
+ ['P10 / P50 / P90','metric','The 10th, 50th and 90th percentile of Monte Carlo paths — a band, not a point.','1. fit log(rate) = a + b·t; drop residuals > 3·MAD; refit\n2. add month-of-year seasonality\n3. N paths with fuel drift, inflation, rate-case steps, volatility\n4. report percentiles per month','USD per unit',['forecast','ai']],
+ ['Fuel drift','metric','Scenario driver: annual change applied to the fuel component of rate paths.','rate path × (1 + drift)^(t/12)','%/yr',['forecast']],
+ ['Independent government estimate (IGE)','metric','The estimate used to judge supplier offers.','IGE = forward strip + supplier margin + ancillaries','USD/MWh',['procure','bcase']],
+ ['DR baseline','metric','Expected load on an event day, from which curtailment is measured.','baseline = mean of the 5 highest of the last 10 non-event weekdays, same hours','kW',['dr']],
+ ['DR revenue','metric','Annual value of a curtailment program.','revenue = capacity pay × committed kW × months + energy pay × curtailed kWh','USD',['dr','bcase']],
+ ['Validated saving','metric','A saving or recovery accepted into the ledger with its source reference.','posted when the source module marks it validated; status open → validated → closed','USD',['ledger','bcase']],
+ ['Sales tax','metric','Tax line in the sample bills.','tax = subtotal × 1.25%','USD',['dataset','anomaly']]
+];
+var DD_TERMS=[
+ ['ACR code','The module number on every tile (ACR-01 to ACR-17). Every figure on the hub carries the code of the module that produced it.',['portfolio']],
+ ['AI-01 ANCCR Analyst','The natural-language analyst that answers from loaded data and names the module behind each number.',['ai']],
+ ['AMI','Advanced metering infrastructure: interval meters that report consumption every 30 minutes.',['dr','anomaly','data']],
+ ['Audit trail','The record of every platform action, written by ACR-10. Nothing is shown that is not logged.',['ledger']],
+ ['BIMS','The billing system whose invoice export shape the EDW line items follow.',['data']],
+ ['CAPRA / Ask Sage','One of the selectable AI runtimes reached through the launcher relay.',['settings','ai']],
+ ['CDD','Cooling degree-days: how far daily temperature sits above 65°F, summed over a month.',['forecast','anomaly','dataset']],
+ ['Commodity','Electric (EL), natural gas (NG), water (FW) or sewer (SE).',['portfolio','dataset']],
+ ['Data Drop Zone','ACR-08. Where CSV, JSON and tariff text enter; columns are mapped and known schemas recognised automatically.',['data']],
+ ['Demand (kW)','Peak power drawn in a billing period; billed separately from energy on commercial tariffs.',['tariff','dr','anomaly']],
+ ['Demand ratchet','A tariff rule that bills demand at no less than a share of the highest peak in the last twelve months.',['tariff']],
+ ['Deseasonalise','Divide each month by its calendar-month median ratio so January and July compare fairly.',['anomaly']],
+ ['EDW','The enterprise data warehouse holding curated utility tables; the interim feed reads from it.',['data','portfolio']],
+ ['EIA','U.S. Energy Information Administration; source of state average retail prices.',['map','forecast']],
+ ['ERD','Entity-relationship diagram: the lineage from Maximo and EDW tables to fields on screen. Being updated in the AI SharePoint.',['dictionary']],
+ ['FEC','Facilities Engineering Command: the regional organisation whose utilities managers receive the bills.',['portfolio','anomaly']],
+ ['HDD','Heating degree-days: how far daily temperature sits below 65°F, summed over a month.',['forecast','anomaly','dataset']],
+ ['Interim feed','The near-term data path agreed on 29 October: a Tableau extract or EDW query dropped into ACR-08 until a Databricks connector exists.',['data','strategy']],
+ ['J-Intake','The Advana/Databricks onboarding process, with CDAO and Command Analytics approvals.',['settings','strategy']],
+ ['Launcher relay','The local component that connects the hub to an AI runtime inside the enclave.',['settings','ai']],
+ ['Line item','One row of an invoice: a description, a quantity or an amount. A bill is several line items sharing a bill number.',['data','anomaly']],
+ ['MAD','Median absolute deviation: a spread measure that ignores outliers, used in every anomaly signal.',['anomaly','forecast']],
+ ['Maximo','The system of record from which EDW is loaded. Alt+I in Maximo shows the backing table for a field.',['data','dictionary']],
+ ['Modeled data','Figures generated from the rules in the Sample Dataset tile rather than loaded from a system.',['dataset']],
+ ['Monte Carlo','Running many random rate paths to produce a distribution instead of one forecast.',['forecast']],
+ ['Planted error','A deliberate mistake written into the sample so Bill Sentinel has something real to find.',['dataset','anomaly']],
+ ['Posture','Portfolio flag per installation: on track, watch, action.',['portfolio']],
+ ['Present mode','The v1.7 display setting that enlarges the hub for an 8–10 foot room.',['settings']],
+ ['Progressive disclosure','Showing a simpler hub first and revealing advanced modules through v1.9 settings toggles.',['settings','learn']],
+ ['Provenance','Where a number came from: table, field, formula and refresh. The gate for production use.',['dictionary','strategy']],
+ ['Rate case','A utility’s filing with the state commission to change its rates. Tracked outside any system today.',['tariff','map','strategy']],
+ ['Rate intervention','The Navy’s regulatory participation in rate cases; one of the product pillars.',['tariff','strategy']],
+ ['Rider','A separate tariff charge added to base rates, often with its own effective date.',['tariff','dataset']],
+ ['Seed','The number that starts the sample generator (160) so the same data is produced every time.',['dataset']],
+ ['Source allow-list','The references the analyst may draw on: PUCs, vendor systems, EIA, S&P, NOAA.',['settings','ai']],
+ ['SPID','Service point id: identifies the metered point an account bills.',['data']],
+ ['TDSX / Hyper','Tableau packaged data source and extract formats; one option for the interim feed.',['data','strategy']],
+ ['TOU','Time-of-use: tariffs with different energy prices by hour of day.',['tariff']],
+ ['TTM','Trailing twelve months.',['portfolio','map']],
+ ['URDB','OpenEI Utility Rate Database: public library of rate schedules.',['tariff']],
+ ['UTRMS','The utility rate management system whose Tableau views the hub emulates; pulls from Maximo and stores in EDW.',['portfolio','tariff']],
+ ['Yorktown dataset','Three years of Naval Weapons Station Yorktown bills and interval data: the agreed validation set.',['dataset','strategy']]
+];
+var DDX=null;
+function ddBuild(){
+ if(DDX) return DDX; var out=[]; var tbl2tile={};
+ Object.keys(COPY).forEach(function(id){var m=(COPY[id].data||'').match(/data-ds="([a-z]+)"/g)||[];m.forEach(function(x){var k=x.slice(9,-1);(tbl2tile[k]=tbl2tile[k]||[]);if(tbl2tile[k].indexOf(id)<0)tbl2tile[k].push(id);});});
+ Object.keys(DSETS).forEach(function(k){var t=DSETS[k];t.cols.forEach(function(c){if(!c.n||c.n==='…')return;out.push({n:c.n,kind:'field',def:c.d,type:c.t,unit:c.u,table:t.name,tkey:k,src:t.src,tiles:(tbl2tile[k]||[]).concat(['dataset'])});});});
+ DD_METRICS.forEach(function(m){out.push({n:m[0],kind:'metric',def:m[2],formula:m[3],unit:m[4],tiles:m[5]});});
+ DD_TERMS.forEach(function(t){out.push({n:t[0],kind:'term',def:t[1],tiles:t[2]});});
+ out.forEach(function(e,i){e.id='e'+i;e.key=e.n.replace(/^[^A-Za-z]+/,'').toLowerCase()||e.n.toLowerCase();e.L=e.key.charAt(0).toUpperCase()||'#';});
+ out.sort(function(a,b){return a.key<b.key?-1:a.key>b.key?1:0;});
+ DDX=out; return out;
+}
+var DDS={q:'',dir:'asc',kinds:null,tiles:null,open:{},lt:{}};
+var DD_KINDS=[['field','Fields'],['metric','Metrics'],['term','Terms']];
+function ddTileList(){var used={};ddBuild().forEach(function(e){e.tiles.forEach(function(t){used[t]=1;});});return TILES.filter(function(t){return used[t.id];}).map(function(t){return [t.id,t.label];});}
+function ddOn(sel,id){return sel===null||sel.indexOf(id)>=0;}
+function ddFilter(){var q=DDS.q.trim().toLowerCase();var out=ddBuild().filter(function(e){ if(!ddOn(DDS.kinds,e.kind))return false; if(DDS.tiles!==null&&!e.tiles.some(function(t){return DDS.tiles.indexOf(t)>=0;}))return false; if(q&&(e.n+' '+e.def+' '+(e.table||'')+' '+(e.formula||'')).toLowerCase().indexOf(q)<0)return false; return true;}); return DDS.dir==='desc'?out.slice().reverse():out;}
+function ddActive(){var n=0;if(DDS.kinds!==null)n++;if(DDS.tiles!==null)n++;return n;}
+function ddPop(){
+ var tl=ddTileList();
+ var grp=function(title,key,items){var sel=DDS[key];var allOn=sel===null;return '<h4>'+title+'<button data-ddall="'+key+'" aria-pressed="'+allOn+'">All '+(allOn?'on':'off')+'</button></h4><div class="ms">'+items.map(function(it){var on=ddOn(sel,it[0]);return '<button data-ddms="'+key+'" data-v="'+it[0]+'" aria-pressed="'+on+'"><i>'+(on?'✓':'')+'</i>'+it[1]+'</button>';}).join('')+'</div>';};
+ return grp('Kind','kinds',DD_KINDS)+grp('Tile','tiles',tl)+'<div class="pop-done"><button class="rs" data-ddreset="1">Reset</button><button class="ok" data-ddclose="1">Done</button></div>';
+}
+function ddAzIcon(){return DDS.dir==='asc'?'<svg viewBox="0 0 24 24"><text class="az" x="2" y="10">A</text><text class="az" x="2" y="21">Z</text><path d="M16 4v16M12.5 16.5L16 20l3.5-3.5"/></svg>':'<svg viewBox="0 0 24 24"><text class="az" x="2" y="10">Z</text><text class="az" x="2" y="21">A</text><path d="M16 20V4M12.5 7.5L16 4l3.5 3.5"/></svg>';}
+function ddSync(){var pop=document.getElementById('dd-pop');if(pop)pop.innerHTML=ddPop();var ico=document.querySelector('#sh-seg [data-ddfilt] .n');var a=ddActive();if(ico)ico.textContent=a?a:'';if(ico)ico.style.display=a?'':'none';var azb=document.querySelector('#sh-seg [data-ddsort]');if(azb){azb.innerHTML=ddAzIcon();azb.setAttribute('aria-label',DDS.dir==='asc'?'Sorted A to Z; tap for Z to A':'Sorted Z to A; tap for A to Z');}}
+document.addEventListener('click',function(e){var t;
+ if(t=e.target.closest('[data-ddclear]')){var inp0=document.getElementById('dd-in');DDS.q='';if(inp0){inp0.value='';inp0.focus();}ddShowList();}
+ else if(t=e.target.closest('[data-ddfilt]')){var sh=document.getElementById('sheet'),sg=document.getElementById('sh-seg'),pp=document.getElementById('dd-pop');pp.style.top=(sg.offsetTop+sg.offsetHeight+6)+'px';sh.classList.toggle('filt');ddSync();buzz();}
+ else if(t=e.target.closest('#sh-seg [data-ddsort]')){DDS.dir=DDS.dir==='asc'?'desc':'asc';ddSync();ddShowList();buzz();}
+ else if(t=e.target.closest('[data-ddall]')){var k=t.dataset.ddall;DDS[k]=(DDS[k]===null)?[]:null;ddSync();show(ddRender);buzz();}
+ else if(t=e.target.closest('[data-ddms]')){var k2=t.dataset.ddms,v=t.dataset.v,items=(k2==='kinds'?DD_KINDS:ddTileList()).map(function(x){return x[0];});var sel=DDS[k2]===null?items.slice():DDS[k2].slice();var i=sel.indexOf(v);if(i>=0)sel.splice(i,1);else sel.push(v);DDS[k2]=(sel.length===items.length)?null:sel;ddSync();show(ddRender);buzz();}
+ else if(t=e.target.closest('[data-ddreset]')){DDS.kinds=null;DDS.tiles=null;ddSync();show(ddRender);buzz();}
+ else if(t=e.target.closest('[data-ddclose]')){document.getElementById('sheet').classList.remove('filt');}
+});
+function tileName(id){var t=TILES.filter(function(x){return x.id===id;})[0];return t?t.label:id;}
+function ddRender(){
+ var all=ddBuild(), list=ddFilter();
+ var fsum=[]; if(DDS.kinds!==null)fsum.push(DDS.kinds.length?DDS.kinds.map(function(k){return DD_KINDS.filter(function(x){return x[0]===k;})[0][1];}).join(', '):'no kinds'); if(DDS.tiles!==null)fsum.push(DDS.tiles.length?DDS.tiles.length+' tile'+(DDS.tiles.length>1?'s':''):'no tiles');
+ var az=DDS.dir==='asc'?'<svg viewBox="0 0 24 24"><text class="az" x="2" y="10">A</text><text class="az" x="2" y="21">Z</text><path d="M16 4v16M12.5 16.5L16 20l3.5-3.5"/></svg>':'<svg viewBox="0 0 24 24"><text class="az" x="2" y="10">Z</text><text class="az" x="2" y="21">A</text><path d="M16 20V4M12.5 7.5L16 4l3.5 3.5"/></svg>';
+ var bar='<div class="dd-bar"><div class="dd-cnt">'+list.length+' of '+all.length+' entries'+(DDS.q?' matching “'+DDS.q+'”':'')+(fsum.length?' · '+fsum.join(' · '):'')+' · '+(DDS.dir==='asc'?'A → Z':'Z → A')+'</div></div>';
+ if(!list.length) return bar+'<p class="note">Nothing matches. '+(fsum.length?'Open the filter and switch a group back on, or ':'')+'clear the search.</p>';
+ var groups=[]; list.forEach(function(e){var g=groups[groups.length-1]; if(!g||g.L!==e.L){g={L:e.L,items:[]};groups.push(g);} g.items.push(e);});
+ var html='';
+ groups.forEach(function(g){ var open=!!DDS.q||!!DDS.lt[g.L];
+  html+='<button class="dd-letter" data-ddlt="'+g.L+'" aria-expanded="'+open+'"><span class="tg">›</span><span>'+g.L+'</span><span class="ct">'+g.items.length+'</span></button>';
+  if(!open) return;
+  g.items.forEach(function(e){
+  var o=!!DDS.open[e.id]; var meta=e.kind==='field'?e.table+(e.type?' · '+e.type:'')+(e.unit?' · '+e.unit:''):e.kind==='metric'?'calculated'+(e.unit?' · '+e.unit:''):'glossary';
+  html+='<div class="dd-e"><button data-dde="'+e.id+'" aria-expanded="'+o+'"><span class="kd '+e.kind+'">'+e.kind+'</span><span><div class="nm">'+e.n+'</div><div class="mt">'+meta+'</div></span><span class="tg">›</span></button>'+(o?'<div class="bd"><p>'+e.def+'</p>'+(e.src?'<p class="mini">Source: '+e.src+'</p>':'')+(e.formula?'<div class="formula">'+e.formula+'</div>':'')+(e.tkey?'<p class="mini">In table: <button class="pill ok" data-ds="'+e.tkey+'" style="margin-left:4px">'+e.table+'</button></p>':'')+'<div class="dd-tiles">'+e.tiles.map(function(t){return '<button data-open="'+t+'">'+tileName(t)+'</button>';}).join('')+'</div></div>':'')+'</div>';
+  });
+ });
+ return bar+html;
+}
+function ddList(){var keep=shB.scrollTop;shB.innerHTML=ddRender();shB.scrollTop=Math.min(keep,shB.scrollHeight);wireDD();}
+function ddShowList(){Array.prototype.forEach.call(shSeg.querySelectorAll('button[data-i]'),function(c){c.setAttribute('aria-selected','false');});show(ddRender);}
+function wireDD(){
+ var inp=document.getElementById('dd-in'); if(!inp) return;
+ var clr=inp.parentNode.querySelector('[data-ddclear]'); if(clr) clr.style.display=DDS.q?'':'none';
+ inp.oninput=function(){DDS.q=inp.value;if(clr)clr.style.display=DDS.q?'':'none';if(!shB.querySelector('.dd-bar')){ddShowList();}else ddList();};
+ inp.onfocus=function(){if(!shB.querySelector('.dd-bar'))ddShowList();};
+ shB.onclick=function(e){var t;
+  if(t=e.target.closest('[data-ddlt]')){var L=t.dataset.ddlt;if(DDS.lt[L])delete DDS.lt[L];else DDS.lt[L]=1;show(ddRender);buzz();}
+  else if(t=e.target.closest('[data-ddsort]')){DDS.dir=DDS.dir==='asc'?'desc':'asc';show(ddRender);buzz();}
+  else if(t=e.target.closest('[data-dde]')){var id=t.dataset.dde;if(DDS.open[id])delete DDS.open[id];else DDS.open[id]=1;show(ddRender);buzz();}
+ };
+}
+function ddAbout(){return '<p>One index of everything the hub names: every field in the nineteen sample tables, every calculated metric with its formula, and the vocabulary used on the tiles. It is the seed of the production data dictionary the 29 October meeting asked for.</p><h3>What each entry carries</h3><ul><li><strong>Fields</strong> — type, unit, description, the table and its source, and the tiles that read it.</li><li><strong>Metrics</strong> — the formula exactly as the code computes it, and where it is shown.</li><li><strong>Terms</strong> — plain-language definitions of hub and program vocabulary.</li></ul><h3>Still to add for production</h3><ul><li>Lineage column: the Maximo and EDW table and column behind each field (from the ERD review).</li><li>Refresh cadence and owner per table, from the interim ingestion contract.</li><li>Acceptance criteria per metric, from the Yorktown known-answer tests.</li></ul><p class="note">Entry counts: '+ddBuild().filter(function(e){return e.kind==='field';}).length+' fields · '+DD_METRICS.length+' metrics · '+DD_TERMS.length+' terms.</p>';}
+
 /* ─────────── sheet machinery ─────────── */
 var phone=document.getElementById('phone'),shB=document.getElementById('sh-b'),shSeg=document.getElementById('sh-seg');
 var CUR=null,TAB=null;
@@ -670,15 +888,16 @@ function openTile(id){
  document.getElementById('sh-t').textContent=t.label;
  var tabs;
  if(id==='dataset'){ document.getElementById('sh-s').textContent='ACR-14 · how the demo data is derived'; tabs=[['Derivation',dsDerive],['Sources',dsSources],['Formulas',dsFormulas],['Planted errors',dsErrors]]; }
- else if(id==='strategy'){ MMX={}; SST.sec={}; document.getElementById('sh-s').textContent='ACR-15 · 29 Oct analysis and course of action'; tabs=[['Summary',stSummary],['Meeting',stMeeting],['Gaps',stGaps],['Plan',stPlan],['Actions',stActions],['Mind map',stMind]]; }
+ else if(id==='strategy'){ MMX={}; SST.sec={}; SST.sp={}; SST.rk={}; document.getElementById('sh-s').textContent='ACR-15 · 29 Oct analysis and course of action'; tabs=[['Summary',stSummary,'#e0a84e'],['Map',stMind,'#18d4f8'],['Meeting',stMeeting,'#8ab4d9'],['Gaps',stGaps,'#e05555'],['Plan',stPlan,'#a07cf0'],['Actions',stActions,'#4db88a']]; }
  else if(id==='learn'){ document.getElementById('sh-s').textContent='ACR-16 · a thirty-minute path'; tabs=[['The path',lnPath],['Why bother',lnWhy]]; }
+ else if(id==='dictionary'){ DDS={q:'',dir:'asc',kinds:null,tiles:null,open:{},lt:{}}; document.getElementById('sh-s').textContent='ACR-17 · fields, metrics and terms'; tabs=[['',ddRender],['<svg class="big" viewBox="0 0 24 24" aria-label="About"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/></svg>',ddAbout,null,'end']]; }
  else if(id==='ai'){ ASKSEL=null; var ca=COPY.ai; document.getElementById('sh-s').textContent=t.code+' · '+ca.sub; tabs=[['Ask',aiAsk],['What it does',function(){return ca.what;}],['Why it matters',function(){return ca.why;}],['Learn it',function(){return ca.learn;}],['Data',function(){return ca.data;}]]; }
  else { var c=COPY[id]; document.getElementById('sh-s').textContent=t.code+' · '+c.sub; tabs=[['What it does',function(){return c.what;}],['Why it matters',function(){return c.why;}],['Learn it',function(){return c.learn;}],['Data',function(){return c.data;}]]; }
- shSeg.innerHTML=tabs.map(function(x,i){return '<button role="tab" data-i="'+i+'" aria-selected="'+(i===0)+'">'+x[0]+'</button>';}).join('');
- shSeg.onclick=function(e){var b=e.target.closest('button');if(!b)return;Array.prototype.forEach.call(shSeg.children,function(c){c.setAttribute('aria-selected','false');});b.setAttribute('aria-selected','true');show(tabs[+b.dataset.i][1]);};
+ shSeg.innerHTML=tabs.map(function(x,i){ if(x[0]==='') return '<div class="seg-search" data-tab="'+i+'"><span class="mini">⌕</span><input id="dd-in" type="search" placeholder="Search" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Search the dictionary"><button data-ddclear="1" aria-label="Clear" style="display:none">✕</button></div>'; return '<button role="tab" data-i="'+i+'" aria-selected="'+(i===0)+'"'+(x[3]==='end'?' class="end"':'')+(x[2]?' style="--c:'+x[2]+'"':'')+(x[0].indexOf('aria-label="')>=0?' aria-label="'+x[0].split('aria-label="')[1].split('"')[0]+'"':'')+'>'+x[0]+'</button>';}).join('')+(id==='dictionary'?'<button class="seg-ico" data-ddfilt="1" aria-label="Filters"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg><span class="n" style="display:none"></span></button><button class="seg-ico" data-ddsort="1" aria-label="Sorted A to Z; tap for Z to A">'+ddAzIcon()+'</button>':'');
+ shSeg.onclick=function(e){var b=e.target.closest('button[data-i]');if(!b)return;Array.prototype.forEach.call(shSeg.querySelectorAll('button[data-i]'),function(c){c.setAttribute('aria-selected','false');});b.setAttribute('aria-selected','true');if(b.scrollIntoView)b.scrollIntoView({inline:'nearest',block:'nearest',behavior:'smooth'});show(tabs[+b.dataset.i][1]);};
  show(tabs[0][1]); phone.classList.add('open'); buzz();
 }
-function show(fn){ shB.onclick=null; shB.onchange=null; var keep=shB.scrollTop; shB.innerHTML=fn(); if(CUR&&CUR.id==='dataset') wireDS(); if(CUR&&CUR.id==='strategy'){ wireST(); shB.scrollTop=keep; } else shB.scrollTop=0; shTop.classList.toggle('on',shB.scrollTop>320); }
+function show(fn){ shB.onclick=null; shB.onchange=null; var keep=shB.scrollTop; shB.innerHTML=fn(); if(CUR&&CUR.id==='dataset') wireDS(); if(CUR&&CUR.id==='strategy'){ wireST(); shB.scrollTop=keep; } else if(CUR&&CUR.id==='dictionary'){ wireDD(); shB.scrollTop=(fn===ddRender)?keep:0; } else shB.scrollTop=0; shTop.classList.toggle('on',shB.scrollTop>320); }
 function wireDS(){
  var sel=document.getElementById('ds-acct'),rng=document.getElementById('ds-m'); if(!sel) return;
  sel.onchange=function(){DSTATE.acct=sel.value;show(dsDerive);};
@@ -698,7 +917,7 @@ function draw(){
  var i=MONTHS.indexOf(DSTATE.ym); ctx.strokeStyle=css.getPropertyValue('--amber').trim(); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x(i),pad); ctx.lineTo(x(i),H-pad); ctx.stroke();
  ctx.fillStyle=css.getPropertyValue('--txf').trim(); ctx.font='18px '+css.getPropertyValue('--mono'); ctx.fillText(MONTHS[0],pad,H-2); ctx.textAlign='right'; ctx.fillText(MONTHS[MONTHS.length-1],W-pad,H-2); ctx.textAlign='left'; ctx.fillText('monthly bill total · red = planted error',pad,18);
 }
-function closeSheet(){ phone.classList.remove('open'); MMX={}; SST.sec={}; shTop.classList.remove('on'); }
+function closeSheet(){ phone.classList.remove('open'); MMX={}; SST.sec={}; SST.sp={}; SST.rk={}; shTop.classList.remove('on'); document.getElementById('sheet').classList.remove('filt'); }
 var shTop=document.getElementById('sh-top');
 shB.addEventListener('scroll',function(){ shTop.classList.toggle('on',shB.scrollTop>320); },{passive:true});
 shTop.onclick=function(){ shB.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); buzz(); };
