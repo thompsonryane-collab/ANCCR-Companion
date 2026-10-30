@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ANCCR AI">
+<meta name="theme-color" content="#0e1824">
+<title>ANCCR AI Companion — learn the hub, trace the data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#141c27; --card:#0e1824; --chrome:#0e1520; --border:#1a2d42; --border2:#27405c;
+  --sage:#4db88a; --cyan:#18d4f8; --amber:#e0a84e; --red:#e05555; --violet:#a07cf0;
+  --tx:#d2e4f4; --txh:#f6faff; --txd:#86a6c4; --txf:#6886a4;
+  --sheet:#0f1a28; --sheet2:#132236; --pill:#1a2d42;
+  --mono:'Share Tech Mono',ui-monospace,Menlo,Consolas,monospace;
+  --dsp:'Orbitron',ui-monospace,monospace;
+  --raj:'Rajdhani','Avenir Next Condensed','Segoe UI',system-ui,sans-serif;
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+  --ease:cubic-bezier(.32,.72,0,1);
+  color-scheme:dark;
+  box-sizing:border-box;
+}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+  --void:#e9eef4; --card:#ffffff; --chrome:#f3f6fa; --border:#d3dce6; --border2:#b9c6d4;
+  --sage:#1f8a5c; --cyan:#0b7fa8; --amber:#b4731a; --red:#c43a3a; --violet:#6d4fcf;
+  --tx:#26354a; --txh:#0e1824; --txd:#4f647c; --txf:#7a8ea4;
+  --sheet:#ffffff; --sheet2:#f3f6fa; --pill:#e4ebf2; color-scheme:light;
+}}
+:root[data-theme="light"]{
+  --void:#e9eef4; --card:#ffffff; --chrome:#f3f6fa; --border:#d3dce6; --border2:#b9c6d4;
+  --sage:#1f8a5c; --cyan:#0b7fa8; --amber:#b4731a; --red:#c43a3a; --violet:#6d4fcf;
+  --tx:#26354a; --txh:#0e1824; --txd:#4f647c; --txf:#7a8ea4;
+  --sheet:#ffffff; --sheet2:#f3f6fa; --pill:#e4ebf2; color-scheme:light;
+}
+:root[data-theme="dark"]{ color-scheme:dark; }
+*,*::before,*::after{box-sizing:inherit;margin:0;padding:0}
+html,body{height:100%;background:var(--void)}
+body{font-family:var(--raj);color:var(--tx);font-size:17px;line-height:1.4;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:var(--cyan);text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
+
+/* phone frame on wide screens */
+#phone{position:relative;width:100%;height:100%;background:var(--void);display:flex;flex-direction:column;overflow:hidden}
+@media (min-width:560px){
+  body{display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 90% at 50% 0%,#1b2a3d,#07090e 70%)}
+  #phone{width:402px;height:min(874px,96vh);border-radius:54px;box-shadow:0 0 0 10px #0a0d13,0 0 0 12px #2a3340,0 40px 90px rgba(0,0,0,.6);--sat:54px;--sab:28px}
+  #phone::before{content:'';position:absolute;top:14px;left:50%;transform:translateX(-50%);width:124px;height:36px;border-radius:20px;background:#000;z-index:50}
+  #phone::after{content:'';position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:140px;height:5px;border-radius:3px;background:var(--txd);opacity:.7;z-index:50}
+}
+/* background grid, same vocabulary as the hub */
+#phone .grid-bg{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(24,212,248,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(24,212,248,.05) 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(180deg,transparent,#000 15%,#000 85%,transparent)}
+
+/* chrome */
+#chrome{position:relative;z-index:5;padding:calc(var(--sat) + 6px) 18px 10px;display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--chrome) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.wordmark{font-family:var(--dsp);font-weight:700;font-size:15px;letter-spacing:.06em;color:var(--txh)}
+.wordmark b{color:var(--amber);font-weight:700}
+#clock{font-family:var(--mono);font-size:12px;color:var(--txd);margin-left:auto}
+.ctl{width:34px;height:34px;border-radius:11px;background:var(--pill);display:grid;place-items:center;color:var(--txd)}
+.ctl svg{width:17px;height:17px}
+
+/* views */
+#views{position:relative;z-index:2;flex:1;overflow:hidden}
+.view{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 18px calc(var(--sab) + 28px);display:none;scroll-padding-top:var(--sat)}
+.view.on{display:block}
+h1{font-family:var(--raj);font-weight:700;font-size:30px;line-height:1.05;color:var(--txh);letter-spacing:-.01em}
+h2{font-family:var(--raj);font-weight:700;font-size:21px;color:var(--txh);margin:22px 0 8px}
+h3{font-family:var(--raj);font-weight:700;font-size:17px;color:var(--txh);margin:16px 0 4px}
+p{margin:6px 0;color:var(--tx)}
+.lead{font-size:18px;color:var(--txd);margin-top:8px;max-width:34ch}
+.kicker{font-family:var(--mono);font-size:12px;color:var(--amber);margin-bottom:6px}
+.callout{margin:16px 0;padding:14px 16px;border-radius:16px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--amber)}
+.callout p{margin:0;color:var(--tx)}
+.hr{height:1px;background:var(--border);margin:20px 0}
+
+/* hub tiles — the v1.7 template */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:22px 10px;margin-top:10px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}
+.ico{position:relative;width:74px;height:74px;border-radius:22px;display:grid;place-items:center;background:linear-gradient(160deg,var(--g1),var(--g2));box-shadow:0 10px 22px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -2px 6px rgba(0,0,0,.25);transition:transform .14s var(--ease)}
+.ico::after{content:'';position:absolute;inset:0;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.14),transparent 55%)}
+.tile:active .ico{transform:scale(.93)}
+.ico svg{width:32px;height:32px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1}
+.tile .lbl{font-family:var(--raj);font-weight:600;font-size:13px;line-height:1.15;color:var(--tx)}
+.tile .code{font-family:var(--mono);font-size:10px;color:var(--txf);letter-spacing:.04em}
+.badge{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--red);color:#fff;font-family:var(--mono);font-size:11px;display:grid;place-items:center;border:2px solid var(--void);z-index:2}
+.badge.new{background:var(--amber);color:#1a1200}
+.ring .ico{box-shadow:0 0 0 3px var(--void),0 0 0 5px var(--amber),0 10px 22px rgba(0,0,0,.35)}
+
+/* sheet */
+#dim{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .3s}
+#sheet{position:absolute;left:0;right:0;bottom:0;z-index:21;height:92%;background:var(--sheet);border-radius:26px 26px 0 0;transform:translateY(104%);transition:transform .42s var(--ease);display:flex;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.4)}
+#phone.open #dim{opacity:1;pointer-events:auto}
+#phone.open #sheet{transform:translateY(0)}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--border2);margin:9px auto 0}
+.sh-head{display:flex;align-items:center;gap:12px;padding:12px 18px 10px}
+.sh-head .ico{width:50px;height:50px;border-radius:15px;flex:none}
+.sh-head .ico svg{width:24px;height:24px}
+.sh-title{font-family:var(--raj);font-weight:700;font-size:20px;line-height:1.1;color:var(--txh)}
+.sh-sub{font-family:var(--mono);font-size:11px;color:var(--txf);margin-top:2px}
+.sh-close{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--pill);display:grid;place-items:center;color:var(--txd);font-size:17px}
+.seg{display:flex;gap:2px;margin:4px 14px 10px;padding:3px;border-radius:12px;background:var(--pill)}
+.seg button{flex:1;padding:7px 4px;border-radius:9px;font-family:var(--raj);font-weight:600;font-size:13.5px;color:var(--txd);white-space:nowrap}
+.seg button[aria-selected="true"]{background:var(--card);color:var(--txh);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.sh-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 18px calc(var(--sab) + 28px)}
+.sh-body h3:first-child{margin-top:4px}
+.sh-body ul{margin:6px 0 10px 18px}
+.sh-body li{margin:4px 0}
+.steps{counter-reset:s;margin:8px 0 0}
+.steps li{list-style:none;position:relative;padding-left:34px;margin:10px 0}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:1px;width:24px;height:24px;border-radius:8px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:12px;display:grid;place-items:center}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.pill{padding:4px 10px;border-radius:999px;background:var(--pill);font-family:var(--mono);font-size:11.5px;color:var(--txd)}
+.pill.ok{color:var(--sage)} .pill.wait{color:var(--amber)} .pill.ext{color:var(--cyan)}
+button.pill{border:1px solid var(--border2);cursor:pointer}
+button.pill::after{content:' ⌕';opacity:.7}
+.dv-head{display:flex;align-items:center;gap:10px;margin:2px 0 8px}
+.dv-head .back{font-family:var(--raj);font-weight:600;font-size:15px;color:var(--cyan);padding:6px 4px}
+.dv-title{font-family:var(--raj);font-weight:700;font-size:18px;color:var(--txh);line-height:1.15}
+.dv-sub{font-family:var(--mono);font-size:11px;color:var(--txf);margin-top:2px}
+.dv-seg{display:flex;gap:4px;padding:3px;border-radius:12px;background:var(--pill);margin:8px 0}
+.dv-seg button{flex:1;padding:7px;border-radius:9px;font-family:var(--raj);font-weight:600;font-size:13.5px;color:var(--txd)}
+.dv-seg button[aria-pressed="true"]{background:var(--card);color:var(--txh);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px -18px 8px 0;padding-right:18px}
+.twrap .tbl{min-width:100%;white-space:nowrap}
+.twrap .tbl td{font-size:13px}
+.twrap .tbl td.num{text-align:right}
+.twrap .tbl .ty{font-family:var(--mono);font-size:11.5px;color:var(--cyan)}
+.twrap .tbl .dsc{white-space:normal;min-width:180px;color:var(--txd);font-size:12.5px}
+.dv-note{font-size:13px;color:var(--txd);margin:6px 0}
+.formula{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:8px 0;overflow-x:auto;color:var(--tx);white-space:pre}
+.formula em{font-style:normal;color:var(--cyan)}
+.formula b{font-weight:normal;color:var(--amber)}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+.tbl th{text-align:left;font-family:var(--mono);font-size:11px;font-weight:normal;color:var(--txf);padding:6px 6px;border-bottom:1px solid var(--border)}
+.tbl td{padding:7px 6px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl td.num{font-family:var(--mono);font-size:12.5px;text-align:right;white-space:nowrap}
+.srcs a{display:block;padding:12px 14px;margin:8px 0;border-radius:14px;background:var(--card);border:1px solid var(--border);color:var(--tx)}
+.srcs a strong{display:block;color:var(--txh);font-weight:600}
+.srcs a span{display:block;font-size:14px;color:var(--txd);margin-top:2px}
+.srcs a small{display:block;font-family:var(--mono);font-size:11px;color:var(--cyan);margin-top:5px;word-break:break-all}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.kpi{padding:10px 10px;border-radius:14px;background:var(--card);border:1px solid var(--border)}
+.kpi b{display:block;font-family:var(--mono);font-size:20px;color:var(--txh)}
+.kpi span{font-size:12.5px;color:var(--txd)}
+.row{display:flex;gap:8px;align-items:center;margin:8px 0}
+select,input[type=range]{font:inherit;color:var(--txh);background:var(--pill);border:1px solid var(--border);border-radius:11px;padding:8px 10px;width:100%}
+input[type=range]{padding:0;height:34px;accent-color:var(--amber)}
+.mini{font-family:var(--mono);font-size:11.5px;color:var(--txf)}
+canvas{width:100%;height:120px;display:block;border-radius:12px;background:var(--card);border:1px solid var(--border)}
+.err{padding:10px 12px;border-radius:12px;border:1px solid var(--border);border-left:3px solid var(--red);background:var(--card);margin:8px 0;font-size:14.5px}
+.err .mini{display:block;margin-bottom:2px;color:var(--red)}
+.note{font-size:14px;color:var(--txd)}
+
+/* learn view */
+.path{margin-top:14px}
+.path .step{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.path .t{font-family:var(--mono);font-size:12px;color:var(--amber);padding-top:4px}
+.path strong{display:block;color:var(--txh);font-weight:700;font-size:17px}
+.path span{color:var(--txd);font-size:15px}
+.path button{margin-top:6px;font-family:var(--mono);font-size:12px;color:var(--cyan)}
+
+/* ask view */
+.q{display:block;width:100%;text-align:left;padding:13px 14px;margin:8px 0;border-radius:14px;background:var(--card);border:1px solid var(--border);color:var(--txh);font-weight:600;font-size:16px}
+.q small{display:block;font-weight:500;color:var(--txd);font-size:13.5px;margin-top:3px}
+.ans{margin:12px 0;padding:14px;border-radius:16px;background:var(--sheet2);border:1px solid var(--border)}
+.ans .who{font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px}
+
+/* tab bar */
+#tabs{position:absolute;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:space-around;padding:8px 10px calc(var(--sab) + 6px);background:color-mix(in srgb,var(--chrome) 90%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--border)}
+#tabs button{display:flex;flex-direction:column;align-items:center;gap:3px;width:64px;color:var(--txf);font-family:var(--raj);font-weight:600;font-size:11.5px}
+#tabs button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+#tabs button[aria-current="page"]{color:var(--amber)}
+.toast{position:absolute;left:50%;top:calc(var(--sat) + 56px);transform:translate(-50%,-12px);z-index:40;padding:9px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border2);font-family:var(--mono);font-size:12px;color:var(--txh);opacity:0;pointer-events:none;transition:all .25s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+/* strategy tile and dictionary cross-link */
+.bars{margin:10px 0}
+.bar{display:grid;grid-template-columns:118px 1fr 40px;gap:8px;align-items:center;margin:7px 0;font-size:13.5px}
+.bar .trk{height:10px;border-radius:5px;background:var(--pill);overflow:hidden}
+.bar .fil{height:100%;width:0;border-radius:5px;transition:width .9s var(--ease)}
+.bar .pct{font-family:var(--mono);font-size:12px;color:var(--txd);text-align:right}
+details.card{margin:8px 0;border-radius:14px;background:var(--card);border:1px solid var(--border);overflow:hidden}
+details.card summary{list-style:none;display:flex;gap:10px;align-items:flex-start;padding:12px 14px;cursor:pointer;color:var(--txh);font-weight:600;font-size:15.5px}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary::after{content:'›';flex:none;width:24px;height:24px;border-radius:7px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:16px;line-height:24px;text-align:center;margin-left:auto;transition:transform .2s var(--ease)}
+details.card summary .chip{margin-left:auto}
+details.card summary .chip + *,details.card summary .chip ~ ::after{margin-left:8px}
+details.card summary:has(.chip)::after{margin-left:8px}
+details.card[open] summary::after{transform:rotate(90deg)}
+details.card summary .n{flex:none;width:26px;height:26px;border-radius:8px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:12px;display:grid;place-items:center}
+details.card summary .chip{margin-left:auto;flex:none}
+details.card .bd{padding:0 14px 12px;color:var(--tx);font-size:14.5px}
+details.card .bd p{margin:4px 0}
+.chip{padding:3px 9px;border-radius:999px;font-family:var(--mono);font-size:10.5px;color:#fff;white-space:nowrap}
+.chip.dec{background:var(--sage)} .chip.open{background:var(--amber);color:#1a1200} .chip.task{background:var(--cyan);color:#021018} .chip.frame{background:var(--txf)} .chip.have{background:var(--sage)} .chip.partial{background:var(--amber);color:#1a1200} .chip.gap{background:var(--red)}
+.filt{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.filt button{padding:6px 11px;border-radius:999px;background:var(--pill);font-family:var(--raj);font-weight:600;font-size:13px;color:var(--txd)}
+.filt button[aria-pressed="true"]{background:var(--txh);color:var(--void)}
+.mtx{width:100%;height:auto;display:block;border-radius:14px;background:var(--card);border:1px solid var(--border)}
+.mtx circle{cursor:pointer;transition:r .15s}
+.mtx circle.sel{stroke:var(--txh);stroke-width:3}
+.mtx text{font-family:var(--raj);font-size:11px;fill:var(--txf)}
+.mtx-sel{margin:8px 0;padding:10px 12px;border-radius:12px;background:var(--sheet2);border:1px solid var(--border);font-size:14.5px;min-height:44px}
+.mtx-sel b{color:var(--txh)}
+.sprints{display:flex;gap:4px;margin:10px 0 4px}
+.sprints button{flex:1;padding:9px 6px;border-radius:11px;background:var(--card);border:1px solid var(--border);font-family:var(--raj);font-weight:700;font-size:13px;color:var(--txd);text-align:left;line-height:1.15}
+.sprints button small{display:block;font-family:var(--mono);font-size:10px;font-weight:normal;color:var(--txf)}
+.sprints button[aria-pressed="true"]{border-color:var(--c);color:var(--txh);box-shadow:inset 0 -3px 0 var(--c)}
+.gantt{margin:8px 0}
+.gantt .g{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;margin:6px 0;font-size:13.5px;color:var(--tx)}
+.gantt .g .t{position:relative;height:8px;border-radius:4px;background:var(--pill)}
+.gantt .g .t i{position:absolute;top:0;bottom:0;border-radius:4px}
+.act{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start;font-size:14.5px}
+.act input{width:22px;height:22px;accent-color:var(--sage);margin-top:1px}
+.act .o{display:block;font-family:var(--mono);font-size:11px;color:var(--txf);margin-top:3px}
+.sec{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin:14px 0 0;border-radius:14px;background:var(--card);border:1px solid var(--border);border-left:4px solid var(--c,var(--amber));font-family:var(--raj);font-weight:700;font-size:17px;color:var(--txh)}
+.sec:first-of-type{margin-top:6px}
+.sec .ct{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:normal;color:var(--c,var(--txf))}
+.sec .tg{flex:none;width:24px;height:24px;border-radius:7px;background:var(--pill);color:var(--c,var(--amber));font-family:var(--mono);font-size:16px;line-height:24px;text-align:center;transition:transform .2s var(--ease)}
+.sec[aria-expanded="true"] .tg{transform:rotate(90deg)}
+.sec[aria-expanded="true"]{border-bottom-left-radius:0;border-bottom-right-radius:0}
+.sec-bd{padding:10px 12px 14px;margin:0 0 4px;border:1px solid var(--border);border-top:0;border-left:4px solid var(--c,var(--amber));border-radius:0 0 14px 14px;background:color-mix(in srgb,var(--card) 55%,transparent)}
+.sec-bd > .dd-letter:first-child{margin-top:0}
+.sec-bd .prog{margin-top:0}
+.sec-bd > .risk:first-child{margin-top:0}
+.sec-bd .steps{margin-top:0}
+.act.done{opacity:.55;text-decoration:line-through}
+.prog{height:6px;border-radius:3px;background:var(--pill);margin:8px 0 2px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--sage);transition:width .4s var(--ease)}
+.risk{margin:8px 0;border-radius:12px;background:var(--card);border:1px solid var(--border);overflow:hidden}
+.risk > button{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;padding:11px 12px}
+.risk .sv{flex:none;width:10px;height:10px;border-radius:50%;margin-top:6px;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 25%,transparent);background:var(--c)}
+.risk .rt{font-weight:600;color:var(--txh);font-size:15px;line-height:1.25}
+.risk .rl{font-family:var(--mono);font-size:10.5px;color:var(--txf);margin-top:3px}
+.risk .rl b{font-weight:normal;color:var(--c)}
+.risk .tg{flex:none;margin-left:auto;width:22px;height:22px;border-radius:7px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:15px;line-height:22px;text-align:center;transition:transform .2s var(--ease)}
+.risk > button[aria-expanded="true"] .tg{transform:rotate(90deg)}
+.risk .bd{padding:0 12px 12px 32px;font-size:14px;color:var(--tx)}
+.risk .bd .lv{display:flex;gap:6px;margin:4px 0 8px}
+.risk .bd .mt{font-family:var(--mono);font-size:10.5px;color:var(--txf);margin-bottom:2px}
+/* mind map */
+.mm-bar{position:sticky;top:-4px;z-index:3;display:flex;gap:6px;align-items:center;margin:0 -18px 10px;padding:10px 18px;background:color-mix(in srgb,var(--sheet) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.mm-bar button{padding:7px 12px;border-radius:999px;background:var(--pill);font-family:var(--raj);font-weight:600;font-size:13px;color:var(--txh)}
+.mm-bar .mini{margin-left:auto}
+#sh-top{position:absolute;right:16px;bottom:calc(var(--sab) + 18px);z-index:5;width:44px;height:44px;border-radius:50%;background:var(--amber);color:#1a1200;box-shadow:0 8px 20px rgba(0,0,0,.4);display:grid;place-items:center;opacity:0;transform:translateY(12px) scale(.9);pointer-events:none;transition:opacity .22s var(--ease),transform .22s var(--ease)}
+#sh-top.on{opacity:1;transform:none;pointer-events:auto}
+#sh-top svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.mm{list-style:none;margin:0;padding:0}
+.mm ul{list-style:none;margin:0 0 0 14px;padding:0 0 0 14px;border-left:1.5px solid var(--border2)}
+.mm li{margin:4px 0;position:relative}
+.mm ul li::before{content:'';position:absolute;left:-14px;top:17px;width:10px;height:1.5px;background:var(--border2)}
+.mm .nd{display:flex;gap:8px;align-items:flex-start;width:100%;text-align:left;padding:7px 10px;border-radius:11px;background:var(--card);border:1px solid var(--border);color:var(--tx);font-size:14px;line-height:1.3}
+.mm .nd.br{font-weight:700;color:var(--txh);border-left:3px solid var(--c)}
+.mm .nd.leaf{background:transparent;border-color:transparent;padding-left:8px;color:var(--txd);cursor:default}
+.mm .nd .tg{flex:none;width:20px;height:20px;border-radius:6px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:13px;display:grid;place-items:center;margin-top:1px;transition:transform .2s var(--ease)}
+.mm .nd[aria-expanded="true"] .tg{transform:rotate(90deg)}
+.mm .nd .ct{margin-left:auto;flex:none;font-family:var(--mono);font-size:10.5px;color:var(--txf);margin-top:3px}
+.mm .nd.conc{color:var(--sage)}
+.mm .root{font-family:var(--raj);font-weight:700;font-size:17px;color:var(--txh);padding:10px 12px;border-radius:12px;background:var(--sheet2);border:1px solid var(--border);margin-bottom:6px}
+.seg{overflow-x:auto;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{flex:1 1 0;min-width:0;font-size:12.5px;padding:8px 4px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border-bottom:3px solid transparent;border-radius:9px 9px 6px 6px;white-space:nowrap;letter-spacing:-.01em}
+.seg button.seg-ico{flex:0 0 auto;min-width:38px;padding:8px 6px}
+.seg button.end{order:9;flex:0 0 auto;min-width:48px}
+.seg-search{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:6px;padding:0 10px;border-radius:9px;background:var(--card);border:1px solid var(--border)}
+.seg-search input{flex:1;min-width:0;background:none;border:0;padding:8px 0;font:inherit;font-size:15px;color:var(--txh);outline:none}
+.seg-search input::placeholder{color:var(--txf)}
+.seg-search button{color:var(--txf);font-size:13px;padding:4px}
+.seg-search:focus-within{border-color:var(--amber)}
+.seg button[aria-selected="true"]{border-bottom-color:var(--c,var(--amber))}
+.seg button[data-i]{color:color-mix(in srgb,var(--c,var(--txd)) 70%,var(--txd))}
+.seg button[data-i][aria-selected="true"]{color:var(--txh)}
+.seg button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.seg button svg.big{width:24px;height:24px;stroke-width:1.9}
+.seg button.seg-ico svg{width:24px;height:24px;stroke-width:1.9}
+.seg button.seg-ico .az{font-family:var(--mono);font-size:9.5px;fill:currentColor;stroke:none}
+.seg button.seg-ico{flex:none;min-width:40px;position:relative;color:var(--amber)}
+.seg button.seg-ico .n{position:absolute;top:2px;right:4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--amber);color:#1a1200;font-family:var(--mono);font-size:10px;line-height:16px;text-align:center}
+#dd-pop{position:absolute;left:12px;right:12px;top:0;z-index:30;background:var(--sheet);border:1px solid var(--border2);border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.5);padding:12px 14px calc(var(--sab) + 14px);display:none;max-height:72%;overflow-y:auto}
+#sheet.filt #dd-pop{display:block}
+#dd-pop h4{font-family:var(--raj);font-weight:700;font-size:15px;color:var(--txh);margin:8px 0 6px;display:flex;align-items:center}
+#dd-pop h4 button{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--cyan);padding:4px 8px;border-radius:999px;background:var(--pill)}
+#dd-pop h4 button[aria-pressed="true"]{background:var(--cyan);color:#021018}
+.ms{display:flex;flex-wrap:wrap;gap:6px}
+.ms button{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:var(--pill);border:1px solid var(--border);font-family:var(--raj);font-weight:600;font-size:13.5px;color:var(--txd)}
+.ms button[aria-pressed="true"]{background:var(--card);border-color:var(--amber);color:var(--txh)}
+.ms button i{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--border2);display:grid;place-items:center;font-style:normal;font-size:11px;color:#1a1200}
+.ms button[aria-pressed="true"] i{background:var(--amber);border-color:var(--amber)}
+.pop-done{display:flex;gap:8px;margin-top:12px}
+.pop-done button{flex:1;padding:10px;border-radius:12px;font-family:var(--raj);font-weight:700;font-size:15px}
+.pop-done .ok{background:var(--amber);color:#1a1200}
+.pop-done .rs{background:var(--pill);color:var(--txd)}
+/* data dictionary */
+.dd-bar{position:sticky;top:-4px;z-index:3;margin:0 -18px 10px;padding:8px 18px 10px;background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.dd-q{display:flex;align-items:center;gap:8px;padding:0 12px;border-radius:12px;background:var(--pill);border:1px solid var(--border)}
+.dd-q input{flex:1;background:none;border:0;padding:10px 0;font:inherit;font-size:16px;color:var(--txh);outline:none}
+.dd-q input::placeholder{color:var(--txf)}
+.dd-q button{color:var(--txf);font-size:15px;padding:4px}
+.dd-row{display:flex;gap:6px;margin-top:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.dd-row::-webkit-scrollbar{display:none}
+.dd-row button{flex:none;padding:6px 11px;border-radius:999px;background:var(--pill);font-family:var(--raj);font-weight:600;font-size:13px;color:var(--txd);white-space:nowrap}
+.dd-row button[aria-pressed="true"]{background:var(--txh);color:var(--void)}
+.dd-row button:disabled{opacity:.3}
+.dd-az{flex:none;width:44px;height:40px;border-radius:12px;background:var(--pill);border:1px solid var(--border);display:grid;place-items:center;color:var(--amber)}
+.dd-az svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.dd-az .az{font-family:var(--mono);font-size:9.5px;fill:currentColor;stroke:none}
+.dd-top{display:flex;gap:8px;align-items:center}
+.dd-top .dd-q{flex:1}
+.dd-cnt{font-family:var(--mono);font-size:11px;color:var(--txf);margin-top:8px}
+.dd-letter{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:var(--dsp);font-weight:700;font-size:22px;color:var(--amber);margin:12px 0 4px;padding:8px 2px 8px 4px;border-bottom:1px solid var(--border)}
+.dd-letter .ct{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--txf)}
+.dd-letter .tg{flex:none;width:26px;height:26px;border-radius:8px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:17px;line-height:26px;text-align:center;transition:transform .2s var(--ease)}
+.dd-letter[aria-expanded="true"] .tg{transform:rotate(90deg)}
+.dd-letter.sp{font-family:var(--raj);font-size:19px;color:var(--c,var(--amber));border-bottom-color:color-mix(in srgb,var(--c,var(--amber)) 35%,transparent)}
+.dd-letter.sp .tg{color:var(--c,var(--amber))}
+.dd-letter.sp + .act{margin-top:2px}
+.dd-letter.sp .wk{font-family:var(--mono);font-size:11px;font-weight:normal;color:var(--txf);margin-left:2px}
+.dd-e{margin:6px 0;border-radius:12px;background:var(--card);border:1px solid var(--border);overflow:hidden}
+.dd-e > button{display:flex;align-items:flex-start;gap:8px;width:100%;text-align:left;padding:10px 12px}
+.dd-e .nm{font-weight:700;color:var(--txh);font-size:15px;line-height:1.2}
+.dd-e .mt{font-family:var(--mono);font-size:10.5px;color:var(--txf);margin-top:3px}
+.dd-e .kd{flex:none;padding:2px 7px;border-radius:999px;font-family:var(--mono);font-size:10px;margin-top:2px}
+.dd-e .kd.field{background:var(--pill);color:var(--cyan)} .dd-e .kd.metric{background:var(--pill);color:var(--amber)} .dd-e .kd.term{background:var(--pill);color:var(--sage)}
+.dd-e .tg{flex:none;margin-left:auto;width:22px;height:22px;border-radius:7px;background:var(--pill);color:var(--amber);font-family:var(--mono);font-size:15px;line-height:22px;text-align:center;transition:transform .2s var(--ease)}
+.dd-e > button[aria-expanded="true"] .tg{transform:rotate(90deg)}
+.dd-e .bd{padding:0 12px 12px;font-size:14px;color:var(--tx)}
+.dd-e .bd p{margin:4px 0}
+.dd-e .bd .formula{margin-top:8px}
+.dd-tiles{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.dd-tiles button{padding:3px 9px;border-radius:999px;background:var(--pill);font-family:var(--mono);font-size:10.5px;color:var(--cyan)}
+@media (prefers-reduced-motion: reduce){ *{transition-duration:.01ms !important;animation:none !important} }
+</style>
+</head>
+<body>
+<div id="phone">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <header id="chrome">
+    <span class="wordmark">ANCCR<b>AI</b></span>
+    <span id="clock" aria-live="off">--:--</span>
+    <button class="ctl" id="theme" aria-label="Toggle light or dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.4A5.5 5.5 0 0 1 12 3z"/></svg></button>
+  </header>
+
+  <main id="views">
+    <!-- HUB -->
+    <section class="view on" id="v-hub" aria-labelledby="hub-h">
+      <div class="kicker">Utility commodity command · NAVFAC PW6</div>
+      <h1 id="hub-h" class="sr">ANCCR AI hub</h1>
+      <div id="tiles" role="list"></div>
+      <div class="hr"></div>
+      <p class="note">Demo figures are modeled, not live. Real installation and utility names are used; consumption, prices and bills are synthetic until an EDW/BIMS extract is loaded. Nothing you do here leaves your device.</p>
+    </section>
+  </main>
+
+  <div id="dim"></div>
+  <div id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-t">
+    <div class="grab"></div>
+    <div class="sh-head"><div class="ico" id="sh-ico"></div><div><div class="sh-title" id="sh-t"></div><div class="sh-sub" id="sh-s"></div></div><button class="sh-close" id="sh-x" aria-label="Close">✕</button></div>
+    <div class="seg" id="sh-seg" role="tablist"></div>
+    <div id="dd-pop" role="dialog" aria-label="Dictionary filters"></div>
+    <div class="sh-body" id="sh-b"></div>
+    <button id="sh-top" aria-label="Scroll to top"><svg viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></svg></button>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+</div>
+
+<script>
+/* ─────────── icons (inline, stroke-based) ─────────── */
+var ICONS={
+ ai:'<path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4z"/><path d="M5 18l.8 1.7L7.5 20l-1.7.5L5 22l-.8-1.5L2.5 20l1.7-.3z"/>',
+ map:'<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
+ portfolio:'<path d="M3 20h18"/><path d="M6 16V9M11 16V5M16 16v-7M21 16V11"/>',
+ tariff:'<path d="M4 4h16v16H4z"/><path d="M4 10h16M10 4v16"/>',
+ forecast:'<path d="M3 17l5-6 4 3 5-7 4 4"/><path d="M3 21h18"/>',
+ anomaly:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17.5v.5"/>',
+ procure:'<path d="M3 7h18l-2 12H5z"/><path d="M8 7a4 4 0 0 1 8 0"/>',
+ dr:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+ bcase:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+ data:'<path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v3h16v-3"/>',
+ utilities:'<path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/>',
+ ledger:'<path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+ reports:'<path d="M4 4h16v16H4z"/><path d="M8 15l3-3 2 2 3-4"/>',
+ settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+ dataset:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/><path d="M15.5 14.5l2 2"/>',
+ strategy:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/><path d="M12 3v2M21 12h-2M12 21v-2M3 12h2"/>',
+ learn:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h5"/>',
+ dictionary:'<path d="M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h12"/><path d="M8 8h6M8 11h4"/>'
+};
+/* ─────────── tiles — v1.7 template plus ACR-14 ─────────── */
+var TILES=[
+ {id:'learn',code:'ACR-16',label:'Learn the hub',g:['#4db88a','#1e7a52']},
+ {id:'dataset',code:'ACR-14',label:'Sample Dataset',g:['#f0b860','#a86a1c'],ring:true},
+ {id:'strategy',code:'ACR-15',label:'Strategy',g:['#a07cf0','#5a3aa8']},
+ {id:'dictionary',code:'ACR-17',label:'Data Dictionary',g:['#3ed6ff','#0f6f99']},
+ {id:'ai',code:'AI-01',label:'ANCCR Analyst',g:['#f0b860','#a86a1c']},
+ {id:'portfolio',code:'ACR-01',label:'Portfolio Command',g:['#5fa8ff','#2456c7']},
+ {id:'anomaly',code:'ACR-04',label:'Bill Sentinel',g:['#ff6b6b','#b32626'],badge:'6'},
+ {id:'tariff',code:'ACR-02',label:'Tariff Engine',g:['#3ed6ff','#1286b4']},
+ {id:'forecast',code:'ACR-03',label:'Rate Forecaster',g:['#5fd17f','#269656']},
+ {id:'map',code:'ACR-12',label:'Map & Rate Pressure',g:['#2fb8ff','#1d63c9']},
+ {id:'procure',code:'ACR-05',label:'Procurement Workbench',g:['#b48cff','#6a3fd1']},
+ {id:'dr',code:'ACR-06',label:'Demand Response',g:['#58e0b8','#1e9a7a']},
+ {id:'bcase',code:'ACR-07',label:'Business Case Builder',g:['#ffc76b','#c07a12']},
+ {id:'data',code:'ACR-08',label:'Data Drop Zone',g:['#41c8e8','#1f78a6']},
+ {id:'utilities',code:'ACR-09',label:'Utility Registry',g:['#8ab4d9','#3d6a99']},
+ {id:'ledger',code:'ACR-10',label:'Savings Ledger',g:['#6fd39a','#2a8a5c']},
+ {id:'reports',code:'ACR-13',label:'Reports',g:['#c9a2ff','#6a3fb5']},
+ {id:'settings',code:'ACR-11',label:'Settings',g:['#8f9aab','#4a5566']}
+];
+
+/* ─────────── client-facing copy: what / why you / learn / data ─────────── */
+var L=function(a){return '<ul>'+a.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';};
+var STEPS=function(a){return '<ol class="steps">'+a.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>';};
+var PILLS=function(a){return '<div class="pills">'+a.map(function(x){var k=DSMAP[x[0].replace(/&amp;/g,'&')];return k?'<button class="pill '+(x[1]||'')+'" data-ds="'+k+'" data-cls="'+(x[1]||'')+'">'+x[0]+'</button>':'<span class="pill '+(x[1]||'')+'">'+x[0]+'</span>';}).join('')+'</div><p class="note">Tap a pill to see the table it refers to, with its schema and a sample of rows.</p>';};
+/* ─────────── sample tables behind the data pills ─────────── */
+var DSMAP={'Loaded bills':'edw','Line-item bills':'edw','EDW/BIMS line items':'edw','EDW query output':'edw','TDSX / Hyper extract':'edw','Interim Tableau/EDW feed':'edw','3+ years history':'history','AMI interval kWh':'ami','AMI 30-minute kWh':'ami','Tariff library':'tariffs','UTRMS tariffs':'tariffs','OpenEI URDB':'urdb','Rate-case register':'ratecases','NOAA degree-days':'noaa','EIA benchmarks':'eia','EIA state prices':'eia','Forecast runs':'forecast','Savings ledger':'ledger','Source allow-list':'allowlist','Market curves (S&P / EIA)':'curves','Contract terms':'contracts','Program tariffs':'programs','Outputs of ACR-02 / 03 / 05':'bcase','Vendor master':'vendors','Permission matrix':'perms','External feeds':'feeds','Correct tariff assignment':'assign'};
+var col=function(n,t,d,u){return {n:n,t:t,d:d,u:u||''};};
+var DSETS={
+ edw:{name:'EDW / BIMS utility invoice line items',src:'NAVFAC EDW (imitated by the sample generator)',note:'One row per line item; a bill is several rows sharing a bill number.',cols:[col('Installation','text','Installation name as held in Maximo'),col('Complex Name','text','Sub-complex within the installation'),col('Vendor','text','Billing utility'),col('Account Number','text','Utility account'),col('Bill Number','text','Invoice identifier'),col('Status','code','APPR = approved for payment'),col('Service End Date','date','DD-MON-YY'),col('Spid','text','Service point id'),col('Billing Description','text','Line item label'),col('Unit Of Measure','code','KWH, KW, CCF, KGAL, TARIFF'),col('Consumption','number','Metered quantity','unit of measure'),col('Cost Usd','number','Billed amount','USD'),col('Commodity','code','EL, NG, FW, SE')],rows:function(){var a=ACCTS[0],b=DS[a.no]['2025-11'],o=[];var push=function(desc,uom,cons,cost){o.push(['Naval Station Norfolk',a.cx,a.vendor,a.no,'91003214','APPR','09-DEC-25','NS_NF_EL_00001',desc,uom,cons==null?'':fmt(cons),cost==null?'':fmt(cost,2),'EL']);};push('Total KWH','KWH',b.units,0);push('Demand KW','KW',b.kw,0);Object.keys(b.parts).forEach(function(k){push(k+' USD','',null,b.parts[k]);});push('General Service-4 TARIFF','TARIFF',0,0);return o;}},
+ history:{name:'Account billing history',src:'Derived from line items (ACR-08 → ACR-03)',note:'The series the forecaster fits. Three or more years are needed for a stable seasonal fit.',cols:[col('account','text','Utility account'),col('month','month','YYYY-MM service month'),col('units','number','Billed consumption','kWh'),col('cost','number','Bill total','USD'),col('rate','number','cost ÷ units','USD/kWh'),col('kw','number','Billed demand','kW')],rows:function(){return MONTHS.slice(-8).map(function(ym){var b=DS['7000011201'][ym];return ['7000011201',ym,fmt(b.units),fmt(b.total,2),(b.total/b.units).toFixed(4),fmt(b.kw)];});}},
+ ami:{name:'AMI interval data, 30-minute',src:'Meter data management export (imitated)',note:'48 interval columns per meter-day; six are shown. Two meters sit on the main-base account.',cols:[col('meter_id','text','AMI meter'),col('date','date','Read date'),col('12:30 AM kWH','number','Interval energy','kWh'),col('1:00 AM kWH','number','Interval energy','kWh'),col('…','','44 more intervals'),col('11:30 PM kWH','number','Interval energy','kWh'),col('12:00 AM kWH','number','Interval energy','kWh'),col('day_total','number','Sum of 48 intervals','kWh')],rows:function(){var b=DS['7000011201']['2025-08'],day=b.units/31,o=[];for(var d=12;d<=17;d++){var we=(d===16||d===17);var tot=day*(we?.78:1);var f=function(h){return tot/48*(0.62+0.38*Math.max(0,Math.sin((h-6)/14*Math.PI)))/0.86;};o.push(['ML55101001','2025-08-'+d,fmt(f(.5)*.82),fmt(f(1)*.82),'…',fmt(f(23.5)*.82),fmt(f(24)*.82),fmt(tot*.82)]);}return o;}},
+ tariffs:{name:'Tariff library',src:'UTRMS tariffs; URDB imports; pasted schedules',note:'Each schedule is stored as components so any account can be re-rated.',cols:[col('tariff_id','text','Library key'),col('utility','text','Issuing utility'),col('schedule','text','Published name'),col('customer_charge','number','Fixed monthly','USD'),col('energy_blocks','text','Block boundaries and rates'),col('demand','number','Demand charge','USD/kW'),col('ratchet','number','Share of 12-month peak','%'),col('effective','date','Effective date'),col('source','code','UTRMS, URDB, PASTE')],rows:function(){return [['DOM-GS4','Dominion Energy Virginia','General Service-4','185.00','all kWh @ 0.0480 + fuel 0.0231','11.75','60','2025-07-01','UTRMS'],['DOM-GS3','Dominion Energy Virginia','General Service-3','96.00','first 50,000 @ 0.0512, over @ 0.0466','9.40','60','2025-07-01','UTRMS'],['DOM-GS2','Dominion Energy Virginia','General Service-2','34.00','first 10,000 @ 0.0598, over @ 0.0531','6.10','0','2025-07-01','UTRMS'],['VNG-GSC','Virginia Natural Gas','General Service-C','48.00','all therms @ 0.612 + dist 0.291','—','—','2025-01-01','UTRMS'],['VNG-GSB','Virginia Natural Gas','General Service-B','48.00','all therms @ 0.612 + dist 0.291','—','—','2025-01-01','UTRMS'],['NFK-W','City of Norfolk Dept. of Utilities','Commercial water','62.00','all kgal @ 5.18','—','—','2025-07-01','PASTE']];}},
+ urdb:{name:'OpenEI Utility Rate Database schedules',src:'api.openei.org/utility_rates (commercial sector)',note:'URDB tiers map directly onto the tariff engine blocks and demand charge.',cols:[col('label','text','URDB record id'),col('utility','text','Utility name in URDB'),col('name','text','Rate name'),col('sector','code','Commercial / Industrial'),col('fixedchargefirstmeter','number','Fixed charge','USD/month'),col('energyratestructure','text','Tier summary'),col('demandratestructure','text','Demand summary'),col('startdate','date','Effective')],rows:function(){return [['5e4a21…0b','Dominion Energy Virginia','GS-4 Large General Service','Commercial','185.00','1 tier: 0.0480 $/kWh','11.75 $/kW','2025-07-01'],['5e4a21…7c','Dominion Energy Virginia','GS-3 Intermediate','Commercial','96.00','2 tiers: 0.0512 / 0.0466','9.40 $/kW','2025-07-01'],['5e4a21…91','Dominion Energy Virginia','GS-2 Intermediate General Service','Commercial','34.00','2 tiers: 0.0598 / 0.0531','6.10 $/kW','2025-07-01'],['5e4a21…c4','Dominion Energy Virginia','GS-4 Time-of-Use','Commercial','185.00','on-peak 0.0714 / off-peak 0.0398','13.20 $/kW on-peak','2025-07-01']];}},
+ ratecases:{name:'Rate-case register (proposed schema)',src:'Not yet in any system — offered to the rate-intervention team',note:'Deferred until an authoritative source is agreed. This is the shape the tariff engine would consume.',cols:[col('utility','text','Filing utility'),col('docket','text','Commission case number'),col('filed','date','Filing date'),col('requested_pct','number','Requested change','%'),col('status','code','Filed, Pending, Approved, Withdrawn'),col('effective','date','Effective date if approved'),col('affects','text','Schedules affected'),col('owner','text','Navy tracker')],rows:function(){return [['Dominion Energy Virginia','PUR-2025-00xxx','2025-03-14','6.8','Pending','','GS-2, GS-3, GS-4','B. Gavon'],['Virginia Natural Gas','PUR-2025-00xxx','2025-05-02','4.1','Approved','2026-01-01','GS-B, GS-C','B. Gavon'],['Dominion Energy Virginia','PUR-2024-00xxx','2024-11-20','2.9','Approved','2025-07-01','Rider adjustment','B. Gavon']];}},
+ noaa:{name:'NOAA degree-days (GSOM)',src:'ncei.noaa.gov · station GHCND:USW00013737 (Norfolk Intl)',note:'Heating and cooling degree-days by month, with 30-year normals, drive weather normalisation.',cols:[col('site','text','Installation'),col('month','month','YYYY-MM'),col('hdd','number','Heating degree-days','°F-days'),col('cdd','number','Cooling degree-days','°F-days'),col('normal_hdd','number','30-year normal','°F-days'),col('normal_cdd','number','30-year normal','°F-days')],rows:function(){return MONTHS.slice(-8).map(function(ym){var b=DS['7000011201'][ym];var mo=+ym.slice(5,7);return ['Naval Station Norfolk',ym,fmt(b.H),fmt(b.C),fmt(Math.max(0,Math.round(620*Math.cos((mo-1)/12*2*Math.PI)+380))),fmt(Math.max(0,Math.round(-380*Math.cos((mo-1)/12*2*Math.PI)+170)))];});}},
+ eia:{name:'EIA retail price benchmarks',src:'api.eia.gov v2 electricity/retail-sales (sector COM)',note:'Modeled until an import replaces it. The benchmark an installation’s effective rate is compared with.',cols:[col('state','code','Two-letter state'),col('month','month','YYYY-MM'),col('commodity','code','ELEC or GAS'),col('sector','code','COM = commercial'),col('price','number','Average retail price','USD/kWh or USD/Mcf'),col('source','code','modeled / EIA-861M / API')],rows:function(){var p=0.0962,o=[];MONTHS.slice(-6).forEach(function(ym,i){p*=1.0028;o.push(['VA',ym,'ELEC','COM',p.toFixed(4),'modeled']);});o.push(['VA',MONTHS[MONTHS.length-1],'GAS','COM','9.42','modeled']);return o;}},
+ forecast:{name:'Forecast runs',src:'ACR-03 output, written to the audit trail',note:'Each run stores its inputs so a band can be reproduced later.',cols:[col('run_id','text','Run identifier'),col('account','text','Utility account'),col('created','date','Run time'),col('horizon','number','Months ahead','months'),col('paths','number','Monte Carlo paths'),col('fuel_drift','number','Scenario driver','%/yr'),col('p10_rate','number','10th percentile, month 12','USD/kWh'),col('p50_rate','number','Median, month 12','USD/kWh'),col('p90_rate','number','90th percentile, month 12','USD/kWh')],rows:function(){return [['FC-2026-0611','7000011201','2026-06-11','24','400','2.0','0.0931','0.0994','0.1071'],['FC-2026-0611b','7000011201','2026-06-11','24','400','4.0','0.0948','0.1023','0.1118'],['FC-2026-0604','7000011202','2026-06-04','12','400','2.0','0.1012','0.1068','0.1139'],['FC-2026-0528','3100047710','2026-05-28','12','400','0.0','0.912','0.947','0.991']];}},
+ ledger:{name:'Savings ledger',src:'ACR-10 ledger of record',note:'Validated savings and recoveries, each with the module and reference that produced it.',cols:[col('entry_id','text','Ledger entry'),col('date','date','Posted'),col('type','code','recovery, avoidance, tariff, procurement'),col('source_module','code','ACR code'),col('account','text','Utility account'),col('amount','number','Validated value','USD'),col('reference','text','Bill, case or memo id'),col('status','code','open, validated, closed')],rows:function(){var b=DS['7000011201']['2025-11'];return [['L-0412','2025-12-15','recovery','ACR-04','7000011201',fmt(b.total,2),'Bill 91003215 duplicate','validated'],['L-0413','2025-12-18','recovery','ACR-04','5500903001','1,214.60','Bill 91002877 rate class','open'],['L-0398','2025-10-02','tariff','ACR-02','7000011202','18,420.00','Re-rate GS-3 → GS-4','validated'],['L-0371','2025-08-20','procurement','ACR-07','7000011201','96,500.00','BC-2025-07 blended supply','closed']];}},
+ allowlist:{name:'Source allow-list (v1.9)',src:'Settings → governance',note:'The analyst may draw on these sources and no others. Visible to every user.',cols:[col('source','text','Reference'),col('kind','code','regulator, vendor, federal, market, weather'),col('domain','text','Host the hub may read'),col('allowed','code','yes / no'),col('owner','text','Who approves changes')],rows:function(){return [['Virginia SCC','regulator','scc.virginia.gov','yes','PW6 governance'],['Dominion Energy Virginia','vendor','dominionenergy.com','yes','PW6 governance'],['Virginia Natural Gas','vendor','virginianaturalgas.com','yes','PW6 governance'],['EIA Open Data','federal','api.eia.gov','yes','PW6 governance'],['NOAA NCEI','weather','ncei.noaa.gov','yes','PW6 governance'],['OpenEI URDB','federal','api.openei.org','yes','PW6 governance'],['S&P Global','market','(subscription)','pending','Contracting'],['General web','—','*','no','—']];}},
+ curves:{name:'Forward market curves',src:'S&P Global / EIA (import-first)',note:'Monthly forward prices at the delivery hub; the strip behind the IGE.',cols:[col('hub','text','Trading hub'),col('delivery','month','Delivery month'),col('price','number','Forward price','USD/MWh'),col('as_of','date','Curve date'),col('source','code','S&P, EIA, broker')],rows:function(){var p=41.2,o=[];['2026-07','2026-08','2026-09','2026-10','2026-11','2026-12'].forEach(function(m,i){p+=[3.1,1.4,-4.2,-2.0,1.8,3.6][i];o.push(['PJM Dominion Zone',m,p.toFixed(2),'2026-06-10','S&P']);});return o;}},
+ contracts:{name:'Supply contracts',src:'Contracting records (imitated)',note:'Terms the procurement workbench compares against the forward curve.',cols:[col('contract','text','Contract id'),col('supplier','text','Supplier'),col('structure','code','fixed, index, blended'),col('start','date','Start'),col('end','date','End'),col('volume','number','Annual volume','MWh'),col('fixed_price','number','Fixed component','USD/MWh'),col('index_share','number','Share on index','%')],rows:function(){return [['N4008-24-C-0012','Supplier A','blended','2024-07-01','2027-06-30','34,200','43.80','40'],['N4008-22-C-0031','Supplier B','fixed','2022-07-01','2025-06-30','33,900','38.10','0'],['N4008-27-D-0004 (option)','—','index','2027-07-01','2030-06-30','35,000','—','100']];}},
+ programs:{name:'Demand-response programs',src:'Utility and RTO program tariffs',note:'Event windows and payments used to value curtailment.',cols:[col('program','text','Program'),col('operator','text','Utility or RTO'),col('season','code','summer, winter, annual'),col('event_window','text','Hours events may be called'),col('capacity_pay','number','Capacity payment','USD/kW-month'),col('energy_pay','number','Energy payment','USD/kWh'),col('max_events','number','Per season')],rows:function(){return [['Emergency Load Response','PJM','summer','14:00–19:00 weekdays','4.20','0.00','10'],['Non-residential DR','Dominion Energy Virginia','summer','13:00–18:00 weekdays','3.10','0.25','8'],['Economic Load Response','PJM','annual','any hour, day-ahead','0.00','LMP','unlimited']];}},
+ bcase:{name:'Business-case inputs',src:'ACR-02, ACR-03 and ACR-05 results',note:'What the builder pulls in before writing the memo.',cols:[col('opportunity','text','Opportunity'),col('source_module','code','ACR code'),col('baseline_cost','number','Current annual cost','USD'),col('proposed_cost','number','Proposed annual cost','USD'),col('p50_saving','number','Median saving','USD'),col('p10_saving','number','Downside','USD'),col('recommendation','text','Draft recommendation')],rows:function(){return [['Re-rate CEP electric GS-3 → GS-4','ACR-02','512,600','494,180','18,420','14,900','Request schedule change'],['Blended supply, 40% index','ACR-05','1,398,000','1,301,500','96,500','41,200','Award option year'],['Normalise gas budget to NOAA normals','ACR-03','184,300','176,900','7,400','−2,100','Adopt for FY27 budget']];}},
+ vendors:{name:'Vendor master',src:'ACR-09 utility registry',note:'One row per utility partner.',cols:[col('vendor_id','text','Registry key'),col('name','text','Utility'),col('hq','text','Headquarters'),col('state','code','Service state'),col('commodity','code','ELEC, GAS, WATER, SEWER'),col('accounts','number','Accounts billed'),col('contact','text','Account manager')],rows:function(){return [['DOM','Dominion Energy Virginia','Richmond, VA','VA','ELEC','3','key account desk'],['VNG','Virginia Natural Gas','Virginia Beach, VA','VA','GAS','3','key account desk'],['NFK','City of Norfolk Dept. of Utilities','Norfolk, VA','VA','WATER','2','commercial billing'],['HRSD','Hampton Roads Sanitation District','Virginia Beach, VA','VA','SEWER','2','HRUBS billing']];}},
+ perms:{name:'Permission matrix (proposed)',src:'Settings → access; enforced by the host or relay',note:'Rows are personas; columns are modules and the data grain each may see.',cols:[col('persona','text','Role'),col('portfolio','code','grain'),col('sentinel','code','grain'),col('tariffs','code','grain'),col('forecast','code','grain'),col('procurement','code','grain'),col('ledger','code','grain'),col('settings','code','access')],rows:function(){return [['Program lead','enterprise','enterprise','enterprise','enterprise','enterprise','enterprise','admin'],['Commodity analyst','enterprise','account','account','account','enterprise','read','none'],['FEC utilities manager','installation','account','account','installation','none','read','none'],['Contracting support','installation','none','read','read','enterprise','read','none'],['Observer','enterprise','none','none','none','none','read','none']];}},
+ feeds:{name:'External feeds',src:'ACR-08 feed panel',note:'Import-first today; live fetch when the network allows and a key is supplied.',cols:[col('feed','text','Feed'),col('endpoint','text','API or portal'),col('key_required','code','yes / no'),col('schema','text','Columns accepted'),col('status','code','modeled, imported, live'),col('used_by','text','Modules')],rows:function(){return [['NOAA degree-days','ncei.noaa.gov/cdo-web/api/v2','yes','site, month, hdd, cdd, normal_hdd, normal_cdd','modeled','ACR-03, 04, 12'],['EIA retail prices','api.eia.gov/v2/electricity/retail-sales','yes','state, month, commodity, price','modeled','ACR-12'],['OpenEI URDB','api.openei.org/utility_rates','yes','URDB JSON items[]','not imported','ACR-02'],['Market curves','S&P Global (subscription)','yes','hub, delivery, price','not imported','ACR-05']];}},
+ assign:{name:'Tariff assignment check',src:'ACR-02 best fit against the billed tariff',note:'The single check that validates the engine: does best fit equal what the FEC is billed under?',cols:[col('account','text','Utility account'),col('billed_tariff','text','From the invoice'),col('best_fit','text','Engine ranking #1'),col('runner_up','text','Engine ranking #2'),col('delta_12m','number','Best fit minus runner-up','USD'),col('match','code','yes / no')],rows:function(){return [['7000011201','General Service-4','General Service-4','GS-4 Time-of-Use','−4,310','yes'],['7000011202','General Service-3','General Service-4','General Service-3','−18,420','no'],['7000011203','General Service-2','General Service-2','General Service-3','−1,140','yes'],['3100047710','General Service-C','General Service-C','General Service-B','−620','yes']];}}
+};
+var DV={key:null,mode:'schema',back:null};
+function dvRender(){
+ var t=DSETS[DV.key]; var rows=t.rows();
+ var head='<div class="dv-head"><button class="back" data-dsback="1">‹ Data</button></div><div class="dv-title">'+t.name+'</div><div class="dv-sub">'+t.src+'</div><p class="dv-note">'+t.note+'</p>'+
+ '<div class="dv-seg"><button data-dsmode="schema" aria-pressed="'+(DV.mode==='schema')+'">Schema · '+t.cols.length+' fields</button><button data-dsmode="data" aria-pressed="'+(DV.mode==='data')+'">Data · '+rows.length+' rows</button></div>';
+ var body;
+ if(DV.mode==='schema'){ body='<div class="twrap"><table class="tbl"><tr><th>field</th><th>type</th><th>unit</th><th>description</th></tr>'+t.cols.map(function(c){return '<tr><td><strong>'+c.n+'</strong></td><td class="ty">'+c.t+'</td><td class="ty">'+(c.u||'—')+'</td><td class="dsc">'+c.d+'</td></tr>';}).join('')+'</table></div>'; }
+ else { body='<div class="twrap"><table class="tbl"><tr>'+t.cols.map(function(c){return '<th>'+c.n+'</th>';}).join('')+'</tr>'+rows.map(function(r){return '<tr>'+r.map(function(v,i){var num=/number/.test(t.cols[i].t);return '<td class="'+(num?'num':'')+'">'+v+'</td>';}).join('')+'</tr>';}).join('')+'</table></div><p class="note">Sample rows regenerated from the demo rules; real extracts replace them through the Data Drop Zone. Swipe sideways for more columns.</p>'; }
+ return head+body;
+}
+document.addEventListener('click',function(e){var t;
+ if(t=e.target.closest('[data-ds]')){ DV.key=t.dataset.ds; DV.mode='schema'; DV.back=shB.innerHTML; shB.innerHTML=dvRender(); shB.scrollTop=0; buzz(); }
+ else if(t=e.target.closest('[data-dsmode]')){ DV.mode=t.dataset.dsmode; shB.innerHTML=dvRender(); }
+ else if(t=e.target.closest('[data-dsback]')){ if(DV.back!=null){ shB.innerHTML=DV.back; DV.back=null; } shB.scrollTop=0; if(CUR&&CUR.id==='dictionary') wireDD(); }
+});
+var COPY={
+ ai:{sub:'Ask across every module',
+  what:'<h3>In one sentence</h3><p>An analyst that has already read every bill, tariff and forecast in the fabric and can answer in plain language, naming the module each number came from.</p><h3>How it works</h3><p>It does not invent figures. It calls the same functions the tiles use — site detail, tariff fit, anomalies, forecasts — and reports what they return. You can pick the runtime in Settings: Claude, CAPRA (Ask Sage), STARK or a local engine through the launcher relay.</p>',
+  why:'<p>Most of the day is spent finding the number, not judging it. Ask “which Norfolk accounts are billed above tariff this quarter” and the lookup is done; your time goes to deciding what to do.</p><p>Because it cites the module, a colleague can reproduce the answer by opening that tile. That is the difference between an assistant and a black box.</p>',
+  learn:STEPS(['Ask something you already know: “what tariff is the main-base electric account on?”','Ask the follow-up you would ask a person: “is that the best fit?”','Open the tile it names and confirm the figure yourself. Do this twice and you will trust it for the third.']),
+  data:PILLS([['Loaded bills','ok'],['Tariff library','ok'],['Forecast runs','ok'],['Source allow-list','wait']])+'<p class="note">The allow-list of authoritative references (PUCs, vendor systems, EIA, S&amp;P, NOAA) is the control stakeholders asked for; it is being added to Settings in v1.9.</p>'},
+ portfolio:{sub:'The UTRMS roll-up, with drill-downs',
+  what:'<h3>In one sentence</h3><p>Enterprise spend, consumption and savings by region, installation and commodity — the views you use in Tableau today, with a drill-down from any number to the bills behind it.</p><h3>What is on screen</h3>'+L(['Trailing-twelve-month cost and units per installation','Posture flags: on track, watch, action','Savings realised against the ledger','Commodity split: electric, gas, water, sewer']),
+  why:'<p>Your morning check becomes one screen. The posture flag tells you where to look first; the drill-down takes you to the account and the bill without leaving the view.</p><p>If your current dashboard answers a question this one cannot, that gap is the most useful thing you can tell the team.</p>',
+  learn:STEPS(['Find your installation on the list','Tap the TTM cost and follow it down to the account','Compare the posture flag with what you already know about that site']),
+  data:PILLS([['EDW/BIMS line items','ok'],['Savings ledger','ok'],['Interim Tableau/EDW feed','wait']])},
+ tariff:{sub:'Structured tariffs, best-fit ranking',
+  what:'<h3>In one sentence</h3><p>Tariffs stored as parts — customer charge, energy blocks, demand with ratchet, time-of-use periods, riders — so any account can be re-rated under every eligible schedule and the best fit ranked.</p><h3>Also</h3>'+L(['Paste a tariff sheet and it parses into structure','Watches rate-case effective dates so expected bills update on the day','Pulls commercial schedules from the OpenEI Utility Rate Database']),
+  why:'<p>Hand-maintained rate sheets are where quiet errors live. Re-rating every account under every option turns “are we on the right tariff?” from a yearly project into a standing answer.</p><p>Trust is earned one check at a time: confirm the engine picks the schedule the FEC actually bills under, and you have validated both the parser and the mapping.</p>',
+  learn:STEPS(['Pick an account you know the tariff for','Read the best-fit ranking and the dollar delta to the runner-up','Open the tariff and read the components — nothing is hidden in a rate']),
+  data:PILLS([['UTRMS tariffs','wait'],['OpenEI URDB','ext'],['Rate-case register','wait']])+'<p class="note">Rate-case tracking is deferred until an authoritative source exists; the engine will accept a simple register (utility, docket, filed, requested change, status, effective) when one is agreed.</p>'},
+ forecast:{sub:'Trend, seasonality, Monte Carlo bands',
+  what:'<h3>In one sentence</h3><p>Fits trend and seasonality to your history, layers scenario drivers — fuel, rate cases, inflation, volatility — and runs hundreds of paths to give P10 / P50 / P90 rate and cost bands by month.</p><h3>Weather</h3><p>NOAA degree-days normalise consumption so a cold winter does not look like a billing error, and a mild one does not look like savings.</p>',
+  why:'<p>Budget questions come with a date attached. A band with a stated confidence is a defensible answer; a single point is a guess with a decimal place.</p><p>The fit ignores points that look like billing anomalies, so a double bill in March does not steer next year’s forecast.</p>',
+  learn:STEPS(['Choose an account with two or more years of history','Move the fuel-drift slider and watch the band widen','Export the P50 series and compare with your last budget submission']),
+  data:PILLS([['3+ years history','wait'],['NOAA degree-days','ext'],['EIA benchmarks','ext']])},
+ anomaly:{sub:'Every bill scored 0–1, with the reason',
+  what:'<h3>In one sentence</h3><p>Each bill is scored for anomaly likelihood from four signals — unit rate, consumption, demand and the variance between what was billed and what the tariff says it should be — and the strongest signal is named as the hypothesis.</p><h3>Hypotheses it writes</h3>'+L(['Likely duplicate or double-billed period','Consumption far outside seasonal norm — check meter multiplier','Demand charge spike — pull interval data, check ratchet','Billed above tariff — rider applied outside effective window','Billed below tariff — estimated read, expect true-up']),
+  why:'<p>These are the cases you already catch by hand, found for you on the day the bill lands. Stakeholders asked for more precise flags and account-level drill-downs; that is the next change to this tile.</p><p>Disputes post their recovery to the Savings Ledger automatically, so the work you do here is counted.</p>',
+  learn:STEPS(['Open the six planted errors in the sample dataset','For each, read the hypothesis before the number and see whether you agree','Mark one as reviewed and watch it leave the badge count']),
+  data:PILLS([['Line-item bills','ok'],['AMI interval kWh','ok'],['Correct tariff assignment','wait']])},
+ procure:{sub:'Forward curve to IGE to strategy',
+  what:'<p>Builds the independent government estimate from the forward strip plus supplier margin and ancillaries, then compares full-fixed, full-index and blended structures on a contract ladder.</p>',
+  why:'<p>The comparison you build in a spreadsheet before every solicitation, kept current as the market moves.</p>',
+  learn:STEPS(['Open an installation with a competitive-supply account','Compare fixed against index at today’s curve','Send the result to the Business Case Builder']),
+  data:PILLS([['Market curves (S&amp;P / EIA)','ext'],['Contract terms','wait']])},
+ dr:{sub:'Baselines and revenue from interval data',
+  what:'<p>Estimates demand-response baselines and the revenue an installation could earn from curtailment programs, using 30-minute interval data.</p>',
+  why:'<p>Turns an existing meter stream into a line of revenue you can test before committing.</p>',
+  learn:STEPS(['Pick the main-base electric account (it has AMI data)','Read the baseline and the event-day shape','Change the program rate and watch the annual value']),
+  data:PILLS([['AMI 30-minute kWh','ok'],['Program tariffs','wait']])},
+ bcase:{sub:'From opportunity to signed memo',
+  what:'<p>Takes an opportunity from market analysis through the IGE to a business-case memo with the recommendation, the savings entry and the audit reference.</p>',
+  why:'<p>The memo writes itself from numbers you have already checked, in the format acquisition review expects.</p>',
+  learn:STEPS(['Start from a Procurement Workbench result','Read the generated memo and edit one assumption','Record it to the ledger']),
+  data:PILLS([['Outputs of ACR-02 / 03 / 05','ok']])},
+ data:{sub:'Where real data enters',
+  what:'<p>Drop a CSV or JSON file and map its columns. EDW/BIMS line items, AMI interval files, NOAA degree-days, EIA prices and URDB schedules are recognised automatically; unknown installations and vendors are registered on the fly.</p>',
+  why:'<p>This is the door the interim Tableau/EDW feed walks through. Nothing leaves the browser; the file is processed on your device.</p>',
+  learn:STEPS(['Download the sample template from this tile','Drop it back in and watch the mapper recognise every column','Load the Yorktown three-year extract when it is ready']),
+  data:PILLS([['TDSX / Hyper extract','wait'],['EDW query output','wait'],['External feeds','ext']])},
+ utilities:{sub:'Every partner, every territory',
+  what:'<p>The utility partner registry: headquarters, service territory, contacts and the accounts each one bills.</p>',
+  why:'<p>One list instead of a hundred bookmarks.</p>',
+  learn:STEPS(['Find Dominion Energy Virginia','Open its accounts list','Tap through to the Tariff Engine for one of them']),
+  data:PILLS([['Vendor master','wait']])},
+ ledger:{sub:'The record of what was saved',
+  what:'<p>Validated savings and recoveries, each with its source module and audit reference. Every action in the platform is written to the audit trail.</p>',
+  why:'<p>When a number is challenged, the derivation is here, not in someone’s inbox.</p>',
+  learn:STEPS(['Open the newest entry','Follow its reference back to the bill or business case','Export the quarter']),
+  data:PILLS([['None beyond loaded data','ok']])},
+ reports:{sub:'Custom reports, DOCX and PDF',
+  what:'<p>Assemble views and tables into a report and export it as Word or PDF.</p>',
+  why:'<p>The quarterly pack from the data you have already validated.</p>',
+  learn:STEPS(['Add Portfolio Command and the Sentinel summary','Export to PDF','Compare with your last pack']),
+  data:PILLS([['None beyond loaded data','ok']])},
+ settings:{sub:'Runtime, relay, connectors, access',
+  what:'<p>Choose the AI runtime, connect the launcher relay, and manage enterprise connectors for Palantir Foundry, Advana (Databricks) and Unity Catalog. Connectors run in simulated mode until the file is inside the enclave.</p><p>Feature toggles (v1.9) let an administrator show a simpler hub to new users and reveal advanced modules over time.</p>',
+  why:'<p>Role-based access — analyst, FEC manager, program lead, observer — is defined here, which is what client ownership of the tool requires.</p>',
+  learn:STEPS(['Switch the theme','Open the Advana connector and read the request it would send','Toggle an advanced module off and back on']),
+  data:PILLS([['Credentials (session only)','wait'],['Permission matrix','wait']])},
+ map:{sub:'Installations, territories, pressure',
+  what:'<p>A map of installations and utility headquarters with a service-territory rate-pressure index and the gap between each installation’s effective rate and its state commercial average.</p>',
+  why:'<p>Shows where rates are moving before the bill does. The methodology is written out in the Sample Dataset tile so it can be challenged and corrected.</p>',
+  learn:STEPS(['Find Norfolk on the map','Read its pressure index and the four inputs behind it','Switch the layer to benchmark gap']),
+  data:PILLS([['EIA state prices','ext'],['Rate-case register','wait'],['Methodology sign-off','wait']])}
+};
+
+/* ─────────── sample dataset: the same rules as the v1.6 generator ─────────── */
+var SAMPLE={seed:160,install:'Naval Station Norfolk',from:'2024-01',to:'2026-06'};
+var ACCTS=[
+ {no:'7000011201',comm:'EL',cx:'Main Base',vendor:'Dominion Energy Virginia',tariff:'General Service-4',base:2850000,kw:7400,ami:true},
+ {no:'7000011202',comm:'EL',cx:'NS Norfolk CEP',vendor:'Dominion Energy Virginia',tariff:'General Service-3',base:610000,kw:1650},
+ {no:'7000011203',comm:'EL',cx:'Lamberts Point',vendor:'Dominion Energy Virginia',tariff:'General Service-2',base:142000,kw:410},
+ {no:'3100047710',comm:'NG',cx:'Main Base',vendor:'Virginia Natural Gas',tariff:'General Service-C',base:62000},
+ {no:'3100047711',comm:'NG',cx:'NS Norfolk CEP',vendor:'Virginia Natural Gas',tariff:'General Service-B',base:9800},
+ {no:'3100047712',comm:'NG',cx:'Lamberts Point',vendor:'Virginia Natural Gas',tariff:'General Service-B',base:4100},
+ {no:'5500903001',comm:'FW',cx:'Main Base',vendor:'City of Norfolk Dept. of Utilities',tariff:null,base:38500},
+ {no:'5500903002',comm:'FW',cx:'NS Norfolk CEP',vendor:'City of Norfolk Dept. of Utilities',tariff:null,base:6200},
+ {no:'9900120077',comm:'SE',cx:'Main Base',vendor:'HRSD (HRUBS)',tariff:null,base:31000},
+ {no:'9900120078',comm:'SE',cx:'NS Norfolk CEP',vendor:'HRSD (HRUBS)',tariff:null,base:5100}];
+var PLANTED=[
+ {acct:'7000011202',ym:'2025-03',note:'Demand spike — billed kW 2.3× typical (meter / CT-ratio error)',finds:'Demand signal'},
+ {acct:'3100047710',ym:'2024-12',note:'Gas consumption ×10 — meter multiplier applied twice; cost did not scale',finds:'Consumption signal, variance negative'},
+ {acct:'5500903001',ym:'2025-09',note:'Water rate 42% above schedule — misapplied tariff class',finds:'Unit-rate and variance signals'},
+ {acct:'7000011203',ym:'2026-01',note:'Account skipped — no bill issued',finds:'Missing-period check'},
+ {acct:'7000011203',ym:'2026-02',note:'Catch-up bill after missed month — 1.9× consumption',finds:'Consumption signal'},
+ {acct:'7000011201',ym:'2025-11',note:'Duplicate invoice — same service period billed twice',finds:'Variance signal, ratio ≈ 2.0'}];
+var MONTHS=(function(){var o=[],y=2024,m=1;while(y+'-'+(m<10?'0':'')+m<=SAMPLE.to){o.push(y+'-'+(m<10?'0':'')+m);m++;if(m>12){m=1;y++;}}return o;})();
+function rng(seed){var t=seed>>>0;return function(){t+=0x6D2B79F5;var r=Math.imul(t^t>>>15,1|t);r^=r+Math.imul(r^r>>>7,61|r);return((r^r>>>14)>>>0)/4294967296;};}
+var R=rng(SAMPLE.seed); function gauss(){return (R()+R()+R()+R()-2)/1.15;}
+function hdd(ym){var mo=+ym.slice(5,7);return Math.max(0,Math.round(620*Math.cos((mo-1)/12*2*Math.PI)+380+gauss()*60));}
+function cdd(ym){var mo=+ym.slice(5,7);return Math.max(0,Math.round(-380*Math.cos((mo-1)/12*2*Math.PI)+170+gauss()*45));}
+var DS={}; /* acct → ym → bill */
+ACCTS.forEach(function(a){ DS[a.no]={}; var rider=0; MONTHS.forEach(function(ym){
+  var H=hdd(ym),C=cdd(ym),f=1+gauss()*.035,units,kw=null,parts={};
+  if(a.comm==='EL') units=a.base*(1+.00055*C-.00012*H)*f; else if(a.comm==='NG') units=a.base*(.28+.0021*H)*f; else units=a.base*(1+.00025*C)*f;
+  if(a.comm==='EL') kw=Math.round(a.kw*(1+.00045*C)*(1+gauss()*.03));
+  units=Math.round(units); if(ym>='2025-07'&&a.comm==='EL') rider=.0062;
+  var note=null;
+  if(a.no==='7000011202'&&ym==='2025-03'){kw=Math.round(kw*2.3);note=PLANTED[0].note;}
+  if(a.no==='3100047710'&&ym==='2024-12'){units*=10;note=PLANTED[1].note;}
+  if(a.comm==='EL'){var eR=.0418+rider;parts={'Generation':units*eR,'Fuel adjustment':units*.0231,'Distribution':units*.0129,'Transmission demand':kw*4.85,'Distribution demand':kw*6.9,'Customer charge':185};}
+  else if(a.comm==='NG'){parts={'Gas supply':units*.612,'Distribution':units*.291,'Rider charges':units*.044,'Customer charge':48};}
+  else if(a.comm==='FW'){parts={'Water consumption':units*5.18,'Service fee':62};}
+  else {parts={'Wastewater treatment':units*6.42,'Service fee':71};}
+  if(a.no==='3100047710'&&ym==='2024-12'){parts['Gas supply']=units/10*.612;parts['Distribution']=units/10*.291;parts['Rider charges']=units/10*.044;}
+  if(a.no==='5500903001'&&ym==='2025-09'){parts['Water consumption']=units*5.18*1.42;note=PLANTED[2].note;}
+  if(a.no==='7000011203'&&ym==='2026-01'){DS[a.no][ym]={skipped:true,note:PLANTED[3].note};return;}
+  if(a.no==='7000011203'&&ym==='2026-02'){units=Math.round(units*1.9);parts['Generation']=units*(.0418+rider);parts['Fuel adjustment']=units*.0231;parts['Distribution']=units*.0129;note=PLANTED[4].note;}
+  var sub=0;Object.keys(parts).forEach(function(k){sub+=parts[k];}); parts['Sales tax (1.25%)']=sub*.0125;
+  var total=sub*1.0125; var dup=(a.no==='7000011201'&&ym==='2025-11');
+  DS[a.no][ym]={units:units,kw:kw,H:H,C:C,f:f,rider:rider,parts:parts,total:total,note:dup?PLANTED[5].note:note,dup:dup};
+});});
+var RECORDS=0; ACCTS.forEach(function(a){MONTHS.forEach(function(ym){var b=DS[a.no][ym];if(!b||b.skipped)return;var n=a.comm==='EL'?10:a.comm==='NG'?7:5;if(a.tariff)n++;RECORDS+=n*(b.dup?2:1);});});
+var UNIT={EL:'kWh',NG:'therm',FW:'kgal',SE:'kgal'};
+var fmt=function(n,d){return n.toLocaleString('en-US',{maximumFractionDigits:d==null?0:d,minimumFractionDigits:d==null?0:d});};
+var usd=function(n){return '$'+fmt(n,2);};
+
+/* ─────────── dataset sheet content ─────────── */
+var DSTATE={acct:'7000011201',ym:'2025-11'};
+function dsSources(){return '<p>The sample imitates a real NAVFAC export so the Data Drop Zone, Bill Sentinel and Forecaster can be exercised before live data arrives. Each source below is either the schema being imitated or the public feed the platform reads once a key is supplied.</p><div class="srcs">'+
+ [['EDW / BIMS utility invoice export','The 19-column line-item schema the generator writes: installation, complex, vendor, account, bill number, status, service end date, SPID, billing description, unit of measure, consumption, cost. Internal NAVFAC source; imitated, not accessed.','Internal · NAVFAC EDW (no public link)',null],
+  ['NOAA NCEI Climate Data Online — GSOM degree-days','Heating and cooling degree-days per month drive the consumption model. Station GHCND:USW00013737 (Norfolk International) is the default for Norfolk.','https://www.ncei.noaa.gov/cdo-web/','https://www.ncei.noaa.gov/cdo-web/'],
+  ['EIA Open Data API v2 — retail electricity price by state','Monthly commercial retail price (¢/kWh) per state; the benchmark an installation’s effective rate is compared with. Modeled until an import replaces it.','https://www.eia.gov/opendata/','https://www.eia.gov/opendata/'],
+  ['EIA Electric Power Monthly (EIA-861M)','Published tables behind the API; the human-readable reference for the state averages.','https://www.eia.gov/electricity/monthly/','https://www.eia.gov/electricity/monthly/'],
+  ['OpenEI Utility Rate Database (URDB)','Commercial rate schedules with energy blocks, demand charges and fixed charges; tiers map directly onto the Tariff Engine. Dominion Energy Virginia schedules are the Norfolk reference.','https://openei.org/wiki/Utility_Rate_Database','https://openei.org/wiki/Utility_Rate_Database'],
+  ['Dominion Energy Virginia — rates and tariffs','Source of the General Service schedule structure (GS-2, GS-3, GS-4) imitated in the electric accounts; the sample uses rounded component rates, not the filed ones.','https://www.dominionenergy.com/virginia/rates-and-tariffs','https://www.dominionenergy.com/virginia/rates-and-tariffs'],
+  ['Virginia Natural Gas — rates','Reference for the gas General Service structure (supply, distribution, riders, customer charge).','https://www.virginianaturalgas.com/','https://www.virginianaturalgas.com/'],
+  ['City of Norfolk Department of Utilities — water rates','Reference for the water volumetric rate and service fee.','https://www.norfolk.gov/utilities','https://www.norfolk.gov/utilities'],
+  ['HRSD — wastewater rates','Reference for the sewer treatment rate billed through HRUBS.','https://www.hrsd.com/','https://www.hrsd.com/'],
+  ['Virginia State Corporation Commission — rate cases','Where Dominion and VNG rate cases are docketed; the authoritative source the group asked for before rate-case features are built.','https://www.scc.virginia.gov/','https://www.scc.virginia.gov/']
+ ].map(function(s){var inner='<strong>'+s[0]+'</strong><span>'+s[1]+'</span><small>'+s[2]+'</small>';return s[3]?'<a href="'+s[3]+'" target="_blank" rel="noopener">'+inner+'</a>':'<a aria-disabled="true">'+inner+'</a>';}).join('')+'</div><p class="note">Links open the public source in a new tab. Sources marked internal are described, not linked.</p>';}
+
+function dsDerive(){
+ var a=ACCTS.filter(function(x){return x.no===DSTATE.acct;})[0]; var b=DS[a.no][DSTATE.ym];
+ var selA='<select id="ds-acct" aria-label="Account">'+ACCTS.map(function(x){return '<option value="'+x.no+'"'+(x.no===DSTATE.acct?' selected':'')+'>'+x.cx+' · '+(x.comm==='EL'?'Electric':x.comm==='NG'?'Gas':x.comm==='FW'?'Water':'Sewer')+' · '+x.no+'</option>';}).join('')+'</select>';
+ var idx=MONTHS.indexOf(DSTATE.ym);
+ var html='<div class="kpis"><div class="kpi"><b>'+ACCTS.length+'</b><span>accounts, 4 commodities</span></div><div class="kpi"><b>'+MONTHS.length+'</b><span>months, Jan 2024 – Jun 2026</span></div><div class="kpi"><b>'+fmt(RECORDS)+'</b><span>line-item records</span></div></div>'+
+ '<h3>How a month is built</h3><p>One installation, Naval Station Norfolk. A seeded random generator (seed '+SAMPLE.seed+') produces the same numbers every time, so results are reproducible. Pick an account and a month and the bill rebuilds below.</p>'+
+ '<div class="row">'+selA+'</div><div class="row"><input type="range" id="ds-m" min="0" max="'+(MONTHS.length-1)+'" value="'+idx+'" aria-label="Month"><span class="mini" id="ds-ml" style="min-width:64px;text-align:right">'+DSTATE.ym+'</span></div>'+
+ '<canvas id="ds-cv" width="720" height="240" aria-label="Monthly total for the selected account"></canvas>';
+ if(b.skipped){ html+='<div class="err"><span class="mini">planted error</span>'+b.note+' — no line items exist for this month; the following month carries a catch-up bill.</div>'; return html; }
+ var U=UNIT[a.comm];
+ html+='<h3>Step 1 · Weather for the month</h3><div class="formula">HDD = max(0, 620·cos(2π·(m−1)/12) + 380 + ε·60)  → <b>'+b.H+'</b>\nCDD = max(0, −380·cos(2π·(m−1)/12) + 170 + ε·45) → <b>'+b.C+'</b>\n<em>ε is a draw from the seeded generator, roughly normal</em></div>';
+ var uf = a.comm==='EL'?'units = base · (1 + 0.00055·CDD − 0.00012·HDD) · f':a.comm==='NG'?'units = base · (0.28 + 0.0021·HDD) · f':'units = base · (1 + 0.00025·CDD) · f';
+ html+='<h3>Step 2 · Consumption</h3><div class="formula">'+uf+'\nbase = <b>'+fmt(a.base)+' '+U+'</b>   f = 1 + ε·0.035 = <b>'+b.f.toFixed(4)+'</b>\nunits = <b>'+fmt(b.units)+' '+U+'</b>'+(b.kw?'\nbilled kW = base kW · (1 + 0.00045·CDD) · (1 + ε·0.03) = <b>'+fmt(b.kw)+' kW</b>':'')+'</div>';
+ var rateLines={EL:'generation  = units × ($0.0418'+(b.rider?' + $0.0062 rider from Jul-2025':'')+')\nfuel adj    = units × $0.0231\ndistribution= units × $0.0129\ntrans demand= kW × $4.85\ndist demand = kW × $6.90\ncustomer    = $185.00',NG:'gas supply  = therms × $0.612\ndistribution= therms × $0.291\nriders      = therms × $0.044\ncustomer    = $48.00',FW:'water       = kgal × $5.18\nservice fee = $62.00',SE:'wastewater  = kgal × $6.42\nservice fee = $71.00'};
+ html+='<h3>Step 3 · Cost components</h3><div class="formula">'+rateLines[a.comm]+'\nsales tax   = subtotal × 1.25%</div>';
+ html+='<table class="tbl"><tr><th>Line item</th><th style="text-align:right">USD</th></tr>'+Object.keys(b.parts).map(function(k){return '<tr><td>'+k+'</td><td class="num">'+usd(b.parts[k])+'</td></tr>';}).join('')+'<tr><td><strong>Bill total</strong></td><td class="num"><strong>'+usd(b.total)+'</strong></td></tr></table>';
+ html+='<p class="note">Effective rate this month: <strong>'+usd(b.total/b.units)+' per '+U+'</strong>. This is the figure Bill Sentinel compares with the account’s own history and with the tariff re-rating.</p>';
+ if(b.note) html+='<div class="err"><span class="mini">planted error in this month</span>'+b.note+'</div>';
+ return html;
+}
+function dsFormulas(){return '<p>Every calculated figure on the hub is one of the formulas below. They are written here in the same form they will take in the production data dictionary.</p>'+
+ '<h3>Bill Sentinel anomaly score (ACR-04)</h3><div class="formula">for each bill, against the account’s other bills (robust statistics):\n z_rate     = |rate − median(rates)| / MAD(rates)\n z_units    = |deseasonalised units − median| / MAD\n z_demand   = |kW − median(kW)| / MAD(kW)\n z_variance = |(billed − tariff re-rating) / re-rating| / 0.04\nsquash(z)   = 1 − exp(−max(0, z − 2.2) / 2.5)      <em>→ each signal in 0..1</em>\nscore       = 0.75·max(signals) + 0.25·mean(signals)\nflagged when score ≥ 0.35; the strongest signal names the hypothesis</div><p class="note">Deseasonalising divides each month by that calendar month’s median ratio to the account median, or by the NOAA weather model when it fits (R² ≥ 0.5).</p>'+
+ '<h3>Weather normalisation (ACR-03 / 04)</h3><div class="formula">fit units = a + b·HDD + c·CDD   over the account’s history\nnormalised units = units − b·(HDD − normal HDD) − c·(CDD − normal CDD)</div>'+
+ '<h3>Benchmark gap (ACR-12)</h3><div class="formula">effective rate = trailing-12-month cost ÷ trailing-12-month units\nbenchmark      = mean of last 12 EIA state commercial prices\ngap            = effective ÷ benchmark − 1\ngap in dollars = (effective − benchmark) × units</div>'+
+ '<h3>Rate-pressure index, 0–100 (ACR-12)</h3><div class="formula">pending  = Σ estimated % of open and future-effective rate cases   → clamp(pending / 10%)     weight 35\nyoy      = TTM effective rate ÷ prior-12 effective rate − 1          → clamp((yoy + 2%) / 10%)  weight 25\nvolatility = stdev of monthly log rate changes × √12                → clamp(vol / 28%)        weight 20\nmarket   = EIA state price, last month ÷ 13 months ago − 1           → scaled                  weight 20\nindex    = 100 × Σ(weight × scaled input)</div><p class="note">This is the methodology stakeholders asked to see written down. It is modeled today and open to amendment before it is trusted.</p>'+
+ '<h3>Rate forecast (ACR-03)</h3><div class="formula">1. fit log(rate) = intercept + slope·t by least squares\n2. drop points whose residual exceeds 3 × MAD, refit    <em>billing anomalies do not steer the trend</em>\n3. add month-of-year seasonality\n4. for N paths: apply fuel drift, inflation, rate-case steps, volatility shock\n5. report P10 / P50 / P90 of rate and cost per month</div>'+
+ '<h3>Tariff re-rating (ACR-02)</h3><div class="formula">expected bill = customer charge\n              + Σ energy blocks (units in block × block rate)\n              + max(billed kW, ratchet % × 12-month peak) × demand rate\n              + Σ TOU periods (share × units × period rate)\n              + Σ riders\nbest fit = eligible tariff with the lowest 12-month re-rated total</div>';}
+function dsErrors(){return '<p>Six billing errors were planted so that Bill Sentinel has something real to find. Each is a case PW6 or an FEC has handled by hand.</p>'+PLANTED.map(function(e){var a=ACCTS.filter(function(x){return x.no===e.acct;})[0];return '<div class="err"><span class="mini">'+a.cx+' · '+(a.comm==='EL'?'electric':a.comm==='NG'?'gas':a.comm==='FW'?'water':'sewer')+' · '+e.ym+'</span>'+e.note+'<div class="mini" style="margin-top:4px;color:var(--sage)">Caught by: '+e.finds+'</div></div>';}).join('')+'<p class="note">The Yorktown three-year validation set will replace this sample. The test is the same: do the flags land on the bills an experienced analyst would have questioned?</p>';}
+
+/* ─────────── strategy tile: the 29 Oct analysis as a live UI ─────────── */
+var ST={
+ decisions:[['Pursue an interim Tableau/EDW feed now; advance a Databricks/API connector in parallel.','v1.7 ingests CSV/JSON through the Data Drop Zone today and carries simulated Advana, Databricks and Foundry connectors in Settings, so the interim path needs no new architecture — only a documented schema and refresh cadence.'],['Validate on one installation, three years — Naval Weapons Station Yorktown, including interval data — before expanding.','A known-answer test bed for Bill Sentinel, the Tariff Engine and the Forecaster. Yorktown is already a registered site with Dominion and VNG service, so the mapping is straightforward.'],['Stand up a provenance and validation framework: ERD and lineage to Maximo, EDW and UTRMS; a data dictionary with formulas; a source allow-list; acceptance criteria.','This is the gating item. Nothing in the notes says the features are wrong; everything says the numbers must be traceable before anyone will act on them.'],['Defer rate-case features until an authoritative source and process exist; integrate the tariffs already in UTRMS first.','Rate cases live in files and spreadsheets outside any system. Building on them now would import the very provenance problem the group is trying to eliminate.']],
+ ready:[['Portfolio & market views',85],['Tariff engine',70],['Forecasting',75],['Bill reconciliation',55],['Explainability & onboarding',45],['Data provenance',30],['Authoritative data connection',20],['Rate-case intervention',20],['Hosting & RBAC',15]],
+ topics:[['Overview & present mode','Demo is a prototype; real utility requires authoritative data connections and validation.','frame','Framing'],['Traceability, provenance, validation','Establish an ERD, data dictionary and validation checklist for authoritative sources before production use.','dec','Decision'],['Sources, accuracy, known datasets','Start with the single-location three-year Yorktown dataset, including interval data; expand once confident.','dec','Decision'],['Near- vs long-term integration','Interim Tableau/EDW feed while advancing the Databricks API; document the ingestion path and fallback.','dec','Decision'],['Databricks / Advana constraints','J-Intake is long and multi-entity; utilities data must sit in sensitive clusters; a dedicated follow-up is needed.','open','Open'],['Tariff, rate cases, regulatory','Integrate existing UTRMS tariffs; defer rate-case features until an authoritative source and process exist.','dec','Decision'],['Rate pressures & market intelligence','Proceed once sources and methodology are confirmed through the data dictionary.','open','Open'],['Development status, explainability, guide','Relay integration and an updated prototype near term; radical transparency — dictionary, formulas, 30-second pitch, progressive disclosure, v1.9 toggles.','task','Build task'],['Training, onboarding, journeys','User stories from real daily workflows, collect users’ Tableau dashboards, a training tile, a visual schematic.','task','Build task'],['Hosting, access, governance','Deliver the relay version now; define hosting (Advana, Databricks, custom, Jupyter) and role-based access long term.','open','Open'],['Ownership & reconciliation','Client ownership is the end state; Bill Sentinel needs actionable, account-level flags; four to five pillars shape the product.','task','Build task']],
+ gaps:[['Emulate UTRMS portfolio views with drill-downs','Portfolio roll-ups, map, site drill-downs','have','Confirm against collected Tableau dashboards'],['Forward-looking market analysis; EIA / URDB layering','Rate pressure, EIA benchmark, URDB import (modeled EIA)','partial','Confirm methodology; replace modeled EIA with import'],['Connect real datasets (Tableau / EDW)','CSV/JSON mapper; EDW/BIMS and AMI schemas recognised','partial','Interim feed plus ingestion contract'],['API / Databricks connector','Connectors wired, simulated mode only','partial','J-Intake; live mode inside the enclave'],['Field-to-source lineage; ERD','Audit trail of actions; no field lineage shown','gap','ERD review; lineage column in dictionary; provenance tooltip'],['Data dictionary with formulas','Formulas live in code; user guide describes modules','gap','Generate dictionary from code; publish with v1.9'],['Constrain AI to authoritative sources','Analyst limited to loaded fabric; no explicit allow-list','partial','Source allow-list in Settings; cite source in answers'],['Tariff identification and mapping QA','Structured tariffs, best-fit ranking, paste-to-parse','partial','Validation rules; confirm against FEC billed tariff'],['Rate-case tracking','Rate-case watch on effective dates with modeled cases','gap','Deferred; offer a register schema'],['Bill Sentinel actionable flags','0–1 score, re-rating variance, dispute to ledger','partial','Score decomposition, thresholds, account drill-down'],['Relay to GenAI / CAPRA','Runtime selector and relay connection in Settings','have','Deliver relay with the updated build'],['Progressive disclosure, v1.9 toggles, tooltips','User guide, tooltips, present mode','partial','Feature toggle set with conservative defaults'],['User journeys, training tile, schematic','None','gap','Collect dashboards → stories → training tile'],['Role-based access control','Persona picker on entry; no enforcement','gap','Permission matrix; enforce at host or relay'],['Hosting architecture','Standalone HTML','gap','Options paper: Advana / Databricks / custom / Jupyter'],['Sample export (~3,000 rows) to Excel','Report export (DOCX/PDF); CSV in Drop Zone','partial','Add XLSX export with score decomposition']],
+ matrix:[['Interim Tableau/EDW feed + ingestion doc',8.8,2.6,'#2e9a63',1],['Yorktown 3-yr load & validation',9.2,3.6,'#2e9a63',1],['ERD + data dictionary + formulas',8.6,4.2,'#2e9a63',2],['Source allow-list (PUC/EIA/S&P/NOAA)',7.4,2.4,'#2e9a63',2],['Relay to GenAI / CAPRA + v1.9 settings',6.6,3.3,'#1f8fc9',1],['Bill Sentinel actionable flags & drill-downs',8.0,4.8,'#1f8fc9',2],['User journeys · training tile · tooltips',6.0,2.0,'#1f8fc9',2],['Tariff mapping workflow (parsers, QA)',6.8,5.8,'#e0a84f',3],['Rate-pressure methodology',5.3,4.0,'#e0a84f',3],['RBAC plan & permission matrix',5.6,5.4,'#e0a84f',3],['Hosting architecture decision',6.0,7.2,'#7a56c9',3],['Advana / Databricks J-Intake & sensitive-data path',7.6,8.8,'#7a56c9',3],['Rate-case features (source TBD)',4.2,7.6,'#c74a4a',3]],
+ sprints:[['Sprint 1','weeks 0–2 · stabilize the data path','#2e9a63',[['Document interim ingestion path, formats, cadence, access, fallback',0,2],['Credentials to Segar; export TDSX/Hyper or EDW query',0,2],['Deliver relay build with v1.9 toggles and tooltips',1,4],['Resolve the artifact-sharing channel',0,1]]],['Sprint 2','weeks 2–6 · validate and explain','#1f8fc9',[['Load Yorktown 3-yr; export ~3,000-row sample to Excel',1,4],['ERD review in AI SharePoint; data dictionary and key formulas',1,5],['Known-answer tests on Yorktown; acceptance criteria',3,6],['Bill Sentinel: thresholds, account flags, drill-downs',2,6],['Collect user dashboards; user journeys; training tile',2,6]]],['Sprint 3+','weeks 6–12 · govern and host','#7a56c9',[['Source allow-list; rate-pressure and tariff methodology',3,7],['User feedback session; prioritize feature list',5,7],['RBAC plan; hosting options; Jupyter feasibility',4,10],['Databricks / Advana working session; J-Intake',2,12],['Rate-case source decision: include or defer',6,10]]]],
+ actions:[['Document interim Tableau/EDW ingestion path, formats, cadence, access controls, fallback','Ryan / data owner',1],['Provide ED SQL/EDW credentials to Segar','Data owner',1],['Export TDSX/Prep output or EDW query for static year-long testing','Segar',1],['Integrate relay to GenAI/CAPRA; deliver updated build with v1.9 settings','Ryan',1],['Resolve artifact-sharing channel; coordinate design/UX with Greg','Ryan',1],['Load and validate Yorktown three-year dataset; export sample to Excel','Ryan / Segar',2],['Review and update ERD and lineage in AI SharePoint','Data owner / Ryan',2],['Create data dictionary and key formulas; update user guide','Ryan',2],['Collect users’ Tableau dashboards and business questions','Stakeholders',2],['Enhance Bill Sentinel: flags, thresholds, drill-downs; ~3,000-record sample views','Ryan',2],['Compare Maximo raw vs curated EDW tables as source of truth','Data owner / Ryan',2],['Produce user journeys, training tile, tooltips, component-to-outcome schematic','Ryan / Greg',2],['Specify analyst parameterization (questions, thresholds, flags) from user stories','Ryan',2],['Define source constraints to authoritative references (PUCs, vendor systems, EIA, S&P, NOAA)','Ryan / stakeholders',3],['Confirm rate-pressure and tariff-mapping methodologies','Stakeholders',3],['Schedule Databricks/Advana working session with CDAO/NITC; begin J-Intake','Program lead',3],['Prepare RBAC plan and permission matrix; define hosting options; assess Jupyter','Ryan / IT',3],['Assess authoritative sources for rate-case data; decide inclusion or deferral','Bernard Gavon / program lead',3],['Define minimum viable feature set for initial release','Program lead / Ryan',3],['Establish onboarding curriculum and progressive-reveal criteria for v1.9','Ryan / Greg',3]],
+ risks:[['Interim feed becomes permanent and the Databricks path stalls','High','Medium','Start J-Intake now; time-box the interim path in the ingestion contract; report intake status at each review'],['Validation reveals curated EDW fields lose fidelity needed for re-rating','Medium','High','Compare Maximo raw against EDW on the Yorktown sample before expanding'],['Scope creep as more stakeholders see the hub','High','Medium','Freeze features at v1.7 plus relay and toggles until acceptance tests pass; keep a parked-ideas list'],['Sensitive-data rules block any hosted deployment','Medium','High','Carry the client-side architecture as an option; document the controls already in place'],['Rate-pressure metric is questioned before methodology is agreed','Medium','Medium','Label as indicative in v1.9; keep behind the advanced toggle until sign-off'],['Single-person dependency on data exports','Medium','Medium','Credentials to Segar; written runbook for the export'],['Artifact sharing friction slows feedback','High','Low','Fix the channel this week; fall back to file hand-off']],
+ questions:['Who owns the Yorktown three-year dataset, and does it include gas, water and sewer as well as electric interval data?','Is the interim feed expected to refresh during validation, or is a one-time static load acceptable until the Databricks path exists?','Which of the five personas on the entry screen correspond to real roles in PW6 and the FECs, and which data grain should each see by default?','What is the working definition of “rate pressure”, and which of EIA, S&P and transmission data count as authoritative for it?','Who is the target owner-administrator at hand-off, and does that person need a no-code admin surface?','Is Jupyter a hosting option in its own right or a route to running the relay inside the enclave?','Which Tableau dashboards are in daily use today, and by whom? That list defines the minimum viable release.']
+};
+var SST={topic:'all',gap:'all',sprint:0,sel:null,done:{},sec:{},sp:{},rk:{}};
+try{SST.done=JSON.parse(localStorage.getItem('anccr-actions')||'{}')||{};}catch(e){SST.done={};}
+function stSummary(){
+ var bars=ST.ready.map(function(r){var c=r[1]>=70?'var(--sage)':r[1]>=40?'var(--amber)':'var(--red)';return '<div class="bar"><span>'+r[0]+'</span><div class="trk"><div class="fil" data-w="'+r[1]+'" style="background:'+c+'"></div></div><span class="pct">'+r[1]+'%</span></div>';}).join('');
+ return '<p>The 29 October session was the first walk-through of the hub with the people who own the data it needs. Most of the hour went to one question: how does this move from a convincing prototype to a tool whose numbers an analyst or program lead can defend? Eleven topics and roughly a dozen follow-ups resolve to four decisions.</p>'+
+ ST.decisions.map(function(d,i){return '<details class="card"><summary><span class="n">'+(i+1)+'</span><span>'+d[0]+'</span></summary><div class="bd"><p>'+d[1]+'</p></div></details>';}).join('')+
+ '<div class="callout"><p><strong>Recommended course.</strong> Treat the next six weeks as a data-fidelity sprint, not a feature sprint. Freeze the hub at v1.7 functionality, add only the relay, the v1.9 toggles and the explainability layer, and spend the rest on the interim feed, the Yorktown set and the dictionary and ERD. Hosting, access control and the Advana intake start now but must not block validation.</p></div>'+
+ '<h3>Where v1.7 stands against what was asked</h3><p class="note">Analyst judgement from the build and the notes, not a measured score. Feature coverage is strong; data, governance and hosting are where the gap sits.</p><div class="bars">'+bars+'</div>';
+}
+function stMeeting(){
+ var types=[['all','All 11'],['dec','Decisions'],['open','Open'],['task','Build tasks']];
+ var f='<div class="filt">'+types.map(function(t){return '<button data-tf="'+t[0]+'" aria-pressed="'+(SST.topic===t[0])+'">'+t[1]+'</button>';}).join('')+'</div>';
+ var rows=ST.topics.filter(function(t){return SST.topic==='all'||t[2]===SST.topic;}).map(function(t,i){return '<details class="card"><summary><span>'+t[0]+'</span><span class="chip '+t[2]+'">'+t[3]+'</span></summary><div class="bd"><p>'+t[1]+'</p></div></details>';}).join('');
+ return '<p>The record has four branches: meeting information, eleven topics each closing with a conclusion, twelve arrangements and ten suggestions. The conclusions are the decisions below; the arrangements and suggestions are merged into the action list.</p>'+f+rows+
+ '<h3>What the stakeholders were really saying</h3><ul><li><strong>Trust before breadth.</strong> Every data conclusion ends with “before production use” or “once confidence is established”.</li><li><strong>Pragmatism on plumbing.</strong> An extract-based interim feed was accepted, provided it is documented and has a fallback.</li><li><strong>Appetite for the AI layer, with guardrails.</strong> The analyst was accepted as the interface; the ask was to parameterize it from real user stories.</li><li><strong>Ownership intent.</strong> The client wants to own and administer the tool, so access control, an admin surface and training are requirements, not extras.</li></ul>';
+}
+function stGaps(){
+ var n={have:0,partial:0,gap:0}; ST.gaps.forEach(function(g){n[g[2]]++;});
+ var f='<div class="filt">'+[['all','All '+ST.gaps.length],['have','Met '+n.have],['partial','Partial '+n.partial],['gap','Open '+n.gap]].map(function(t){return '<button data-gf="'+t[0]+'" aria-pressed="'+(SST.gap===t[0])+'">'+t[1]+'</button>';}).join('')+'</div>';
+ var lab={have:'Have',partial:'Partial',gap:'Gap'};
+ return '<p>Sixteen things stakeholders asked for, against what v1.7 does today. Every open item is documentation, governance or hosting; none requires a new analytical module.</p>'+f+ST.gaps.filter(function(g){return SST.gap==='all'||g[2]===SST.gap;}).map(function(g){return '<details class="card"><summary><span>'+g[0]+'</span><span class="chip '+g[2]+'">'+lab[g[2]]+'</span></summary><div class="bd"><p><strong>v1.7 today:</strong> '+g[1]+'</p><p><strong>Closing action:</strong> '+g[3]+'</p></div></details>';}).join('');
+}
+function stPlan(){
+ var W=340,H=250,px=function(v){return 18+(v-3)/9*(W-30);},py=function(v){return H-22-(v-1)/9*(H-40);};
+ var svg='<svg class="mtx" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Priority matrix"><line x1="'+px(5)+'" y1="10" x2="'+px(5)+'" y2="'+(H-18)+'" stroke="var(--border2)" stroke-dasharray="4 4"/><line x1="12" y1="'+py(5)+'" x2="'+(W-10)+'" y2="'+py(5)+'" stroke="var(--border2)" stroke-dasharray="4 4"/>'+
+ '<text x="'+(W-12)+'" y="'+(H-26)+'" text-anchor="end" fill="var(--sage)">quick wins — do first</text><text x="'+(W-12)+'" y="20" text-anchor="end">high value, long lead</text><text x="14" y="20">lower value, high effort</text><text x="'+(W/2)+'" y="'+(H-6)+'" text-anchor="middle">value / unblocks production →</text><text x="10" y="'+(H/2)+'" transform="rotate(-90 10 '+(H/2)+')" text-anchor="middle">effort / dependency →</text>'+
+ ST.matrix.map(function(m,i){return '<circle data-m="'+i+'" class="'+(SST.sel===i?'sel':'')+'" cx="'+px(m[1])+'" cy="'+py(m[2])+'" r="'+(SST.sel===i?11:8)+'" fill="'+m[3]+'"><title>'+m[0]+'</title></circle>';}).join('')+'</svg>';
+ var s=SST.sel==null?'<span class="note">Tap a dot to see the item and its sprint; tap it again to clear.</span>':'<b>'+ST.matrix[SST.sel][0]+'</b><br><span class="note">Starts in '+ST.sprints[ST.matrix[SST.sel][4]-1][0]+' · '+ST.sprints[ST.matrix[SST.sel][4]-1][1]+'</span>';
+ var sp=ST.sprints[SST.sprint];
+ var sb='<div class="sprints">'+ST.sprints.map(function(x,i){return '<button data-sp="'+i+'" style="--c:'+x[2]+'" aria-pressed="'+(i===SST.sprint)+'">'+x[0]+'<small>'+x[1]+'</small></button>';}).join('')+'</div>';
+ var g='<div class="gantt">'+sp[3].map(function(r){return '<div class="g"><span>'+r[0]+'</span><div class="t"><i style="left:'+(r[1]/12*100)+'%;width:'+((r[2]-r[1])/12*100)+'%;background:'+sp[2]+'"></i></div></div>';}).join('')+'<div class="g"><span class="mini">bars span a 12-week window</span><span class="mini" style="text-align:right">wk 0 → 12</span></div></div>';
+ return '<h3>Priority matrix</h3><p class="note">Items scored on how much they unblock production use and how much effort or outside dependency they carry.</p>'+svg+'<div class="mtx-sel" id="mtx-sel">'+s+'</div><h3>Twelve-week sequence</h3>'+sb+g;
+}
+function stActions(){
+ var done=0; ST.actions.forEach(function(a,i){if(SST.done[i])done++;});
+ var sprintsDef=[[1,'Sprint 1','weeks 0–2','#2e9a63'],[2,'Sprint 2','weeks 2–6','#1f8fc9'],[3,'Sprint 3+','weeks 6–12','#7a56c9']];
+ var list=sprintsDef.map(function(sp){ var items=ST.actions.map(function(a,i){return [a,i];}).filter(function(x){return x[0][2]===sp[0];}); var dn=items.filter(function(x){return SST.done[x[1]];}).length; var open=!!SST.sp[sp[0]];
+  return '<button class="dd-letter sp" style="--c:'+sp[3]+'" data-sp2="'+sp[0]+'" aria-expanded="'+open+'"><span class="tg">›</span><span>'+sp[1]+'</span><span class="wk">'+sp[2]+'</span><span class="ct">'+dn+' of '+items.length+' done</span></button>'+(open?items.map(function(x){var a=x[0],i=x[1];return '<label class="act'+(SST.done[i]?' done':'')+'"><input type="checkbox" data-ai="'+i+'"'+(SST.done[i]?' checked':'')+'><span>'+a[0]+'<span class="o">'+a[1]+'</span></span></label>';}).join(''):''); }).join('');
+ var sec=function(id,title,count,body,c){var o=!!SST.sec[id];return '<button class="sec" style="--c:'+c+'" data-sec="'+id+'" aria-expanded="'+o+'"><span class="tg">›</span><span>'+title+'</span><span class="ct">'+count+'</span></button>'+(o?'<div class="sec-bd" style="--c:'+c+'">'+body+'</div>':'');};
+ return '<p>Merged from the meeting’s arrangements and suggestions, duplicates collapsed. Owners are proposed where the notes imply them. Ticks are kept on this device only.</p>'+
+ sec('acts','Action register',done+' of '+ST.actions.length+' done','<div class="prog"><i style="width:'+(done/ST.actions.length*100)+'%"></i></div>'+list,'var(--sage)')+
+ sec('risks','Risks',ST.risks.length,ST.risks.map(function(r,i){var sc={High:3,Medium:2,Low:1};var s=sc[r[1]]*sc[r[2]];var c=s>=6?'var(--red)':s>=3?'var(--amber)':'var(--sage)';var sev=s>=6?'severe':s>=3?'moderate':'low';var lv=function(v){return '<span class="chip '+(v==='High'?'gap':v==='Medium'?'partial':'have')+'">'+v+'</span>';};var o=!!SST.rk[i];return '<div class="risk" style="--c:'+c+'"><button data-rk="'+i+'" aria-expanded="'+o+'"><span class="sv"></span><span><div class="rt">'+r[0]+'</div><div class="rl"><b>'+sev+'</b> · likelihood '+r[1].toLowerCase()+' · impact '+r[2].toLowerCase()+'</div></span><span class="tg">›</span></button>'+(o?'<div class="bd"><div class="lv">'+lv(r[1])+lv(r[2])+'</div><div class="mt">mitigation</div>'+r[3]+'</div>':'')+'</div>';}).join('')+'<p class="mini">severity = likelihood × impact · red severe, amber moderate, green low</p>','var(--red)')+
+ sec('qs','Open questions',ST.questions.length,'<ol class="steps">'+ST.questions.map(function(q){return '<li>'+q+'</li>';}).join('')+'</ol>','var(--amber)');
+}
+function wireST(){
+ var b=shB;
+ Array.prototype.forEach.call(b.querySelectorAll('.fil'),function(el){requestAnimationFrame(function(){el.style.width=el.dataset.w+'%';});});
+ b.onclick=function(e){var t;
+  if(t=e.target.closest('[data-tf]')){SST.topic=t.dataset.tf;show(stMeeting);}
+  else if(t=e.target.closest('[data-gf]')){SST.gap=t.dataset.gf;show(stGaps);}
+  else if(t=e.target.closest('[data-rk]')){var rk=t.dataset.rk;if(SST.rk[rk])delete SST.rk[rk];else SST.rk[rk]=1;show(stActions);buzz();}
+  else if(t=e.target.closest('[data-sp2]')){var sp=t.dataset.sp2;if(SST.sp[sp])delete SST.sp[sp];else SST.sp[sp]=1;show(stActions);buzz();}
+  else if(t=e.target.closest('[data-sp]')){SST.sprint=+t.dataset.sp;show(stPlan);}
+  else if(t=e.target.closest('[data-sec]')){var sid=t.dataset.sec;if(SST.sec[sid])delete SST.sec[sid];else SST.sec[sid]=1;show(stActions);buzz();}
+  else if(t=e.target.closest('[data-mm]')){var id=t.dataset.mm;if(MMX[id])delete MMX[id];else MMX[id]=1;show(stMind);buzz();}
+  else if(t=e.target.closest('[data-mmall]')){MMX={};if(t.dataset.mmall==='1')mmIds(MM,'r').forEach(function(i){MMX[i]=1;});show(stMind);buzz();}
+  else if(t=e.target.closest('circle[data-m]')){var mi=+t.dataset.m;SST.sel=(SST.sel===mi)?null:mi;show(stPlan);buzz();}
+ };
+ b.onchange=function(e){var c=e.target.closest('input[data-ai]');if(!c)return;SST.done[c.dataset.ai]=c.checked;if(!c.checked)delete SST.done[c.dataset.ai];try{localStorage.setItem('anccr-actions',JSON.stringify(SST.done));}catch(x){}show(stActions);buzz();};
+}
+
+/* mind map of the 29 Oct record — every node collapsed by default */
+var MM={t:'10-29 Meeting: ANNCR AI Data Integration and Validation',k:[
+ {t:'Meeting information',c:'#8a95a3',k:[{t:'Date: 2026-10-29 13:39'},{t:'Location: not recorded'},{t:'Participants: Ryan and five other speakers'}]},
+ {t:'Meeting notes',c:'#18d4f8',k:[
+  {t:'Overview of the AI-driven hub and present mode',k:[{t:'Ryan demonstrated a present mode optimised for visibility at 8–10 feet using sample data (“forty-two installations”).'},{t:'The hub acts as an internal AI analyst with pre-set questions, portfolio views, flags and drill-downs, emulating UTRMS views and adding forward-looking market analysis, AI-assisted workspaces, tariff/URDB integration and EIA API layering.'},{t:'The demo relies on synthetic data; production utility depends on connecting real datasets via Tableau/EDW initially and APIs/Databricks longer term.'},{t:'Conclusion: the demo is a prototype; real utility requires authoritative data connections and validation for accuracy and auditability.',x:1}]},
+  {t:'Data traceability, provenance and validation framework',k:[{t:'Stakeholders emphasised traceability, veracity and auditability: mapping front-end fields to source tables (e.g. Maximo), auditing every data point, and a comprehensive data dictionary with formulas.'},{t:'ERD lineage is required; the ERD in the AI SharePoint should be reviewed and updated. Maximo shortcut: Alt+I reveals the backend table for a field.'},{t:'Visibility into provenance is needed to build trust and to constrain AI outputs to authoritative sources (PUCs, vendor systems, EIA, S&P, NOAA).'},{t:'Conclusion: establish an ERD, data dictionary and validation checklist with acceptance criteria before production use.',x:1}]},
+  {t:'Data sources, accuracy and validation using known datasets',k:[{t:'Questions covered real vs synthetic data, parameter settings and source parameters; data shape improves with real loading; parameterisation is a next milestone.'},{t:'Validation plan: three years of Naval Weapons Station Yorktown data (including interval data); load a small known dataset, allow external enrichment, validate incrementally.'},{t:'Conclusion: start with a single-location, three-year dataset; expand once confidence is established.',x:1}]},
+  {t:'Near-term vs long-term data integration paths',k:[{t:'Short term: link existing Tableau/EDW sources feeding UTRMS dashboards — Tableau Prep or TDSX/Hyper extracts as an interim relay, and a static year-long dataset via Tableau/EDW queries.'},{t:'Long term: API/Databricks connector and potential migration from EDW to Databricks; UTRMS pulls from Maximo and stores in EDW; raw Maximo data with standardised units considered.'},{t:'Access pathways are fragmented (Tableau extracts vs EDW vs future Databricks); ED SQL/EDW credentials are available to some; Segar should receive credentials.'},{t:'Conclusion: pursue an interim Tableau/EDW feed while advancing Databricks API integration; choose and document the near-term ingestion path and fallback.',x:1}]},
+  {t:'Constraints in Databricks/Advana and sensitive data handling',k:[{t:'Advana/Databricks J-Intake is lengthy with multi-entity approvals (CDAO, Command Analytics); EDW-to-Databricks automation is impeded by on-prem servers and bronze/silver/gold standards.'},{t:'Utilities data must reside in sensitive clusters; EDL cannot ingest restricted data; existing Databricks data is limited and outdated; quarterly manual EDW uploads are discouraged.'},{t:'Conclusion: technical hurdles need a dedicated follow-up; an interim solution is necessary while compliance paths are clarified.',x:1}]},
+  {t:'Tariff, rate cases and regulatory data integration',k:[{t:'Need to identify correct tariffs, constrain selection and support scenario comparisons (fixed price, time-of-use) for savings and risk.'},{t:'Some tariffs exist in UTRMS; rate cases are tracked outside systems in files and spreadsheets; best-fit classes and mapping require authoritative libraries, parsers and validation rules.'},{t:'The Navy has regulatory responsibilities under ANNCR; Bernard Gavon leads rate-intervention tracking; the authoritative source for rate data not in UTRMS is unresolved.'},{t:'Conclusion: integrate existing tariffs and defer rate-case features until an authoritative source and process are defined.',x:1}]},
+  {t:'Rate pressures and market intelligence',k:[{t:'Interest in analysing rate pressures and market trends using EIA, S&P and transmission data; the source of “rate pressure” metrics is unclear.'},{t:'Aim to overlay rate pressures with tariffs for a comprehensive view.'},{t:'Conclusion: proceed with rate-pressure analysis once sources and methodologies are confirmed in the data dictionary.',x:1}]},
+  {t:'Development status, explainability and user guide',k:[{t:'The current build is ready for data loading and testing, with a relay to connect to GenAI/CAPRA models; near-term delivery includes relay integration and an updated prototype.'},{t:'Radical transparency: data dictionary, formulas and a 30-second pitch; progressive disclosure with hover tooltips and feature toggles (advanced features hidden in v1.9 settings).'},{t:'Export sample data to Excel for review; ensure reliable artifact-sharing channels.'},{t:'Conclusion: proceed with a methodical user-guide walkthrough and explainability materials; prioritise the feature list after initial data QC.',x:1}]},
+  {t:'User-centric training, onboarding and journeys',k:[{t:'Create user stories (e.g. Melissa’s daily workflow using the ANNCR Analyst), collect users’ Tableau dashboards to align features with real business questions, and design guided onboarding (a “training tile”).'},{t:'Build visual schematics connecting components (tariff engine, market intelligence) to mission outcomes; use team strengths for storytelling and UX.'},{t:'Conclusion: develop structured onboarding artefacts, progressive feature mapping and training materials.',x:1}]},
+  {t:'Application hosting, access and governance',k:[{t:'The prototype is a standalone HTML; long-term hosting options include Advana/Databricks/custom app, with DoD GenAI ecosystem feasibility and Jupyter deployment under review.'},{t:'Role-based access control is envisioned (analyst vs program-lead visibility); the relay connects the app to GenAI models.'},{t:'Conclusion: deliver an updated version with relay near term; define hosting architecture and permissions long term.',x:1}]},
+  {t:'Ownership, usability and bill/invoice reconciliation',k:[{t:'End goal is client ownership and management of the tool and permissions; Bill Sentinel is promising but lacks actionable granularity — it needs precise flags and account-level discrepancy detail.'},{t:'Four to five pillars shape the product: market intelligence, forecasting, rate intervention, bill/invoice reconciliation.'},{t:'Conclusion: enhance reconciliation with actionable signals and drill-downs; plan a user feedback session to refine UX and data views.',x:1}]}
+ ]},
+ {t:'Next arrangements',c:'#4db88a',k:[{t:'Connect the hub to existing Tableau/EDW sources feeding UTRMS (interim); document ingestion path, file formats, refresh cadence and access controls.'},{t:'Prepare a Tableau dataset (TDSX or Prep output) or EDW queries for static year-long testing; provide ED SQL/EDW credentials to Segar.'},{t:'Load and validate the Yorktown three-year dataset; export sample data to Excel for review.'},{t:'Establish and review the ERD and data lineage in the AI SharePoint; create a data dictionary and key formulas; update the user guide.'},{t:'Define source constraints to authoritative references (PUCs, vendor systems, EIA, S&P, NOAA); confirm methodologies for rate pressure and tariff mapping.'},{t:'Schedule a working session on Databricks/Advana J-Intake, sensitive-data requirements and permitted ingestion paths with CDAO/NITC.'},{t:'Integrate the relay to GenAI/CAPRA models and deliver an updated version with seamless settings.'},{t:'Prepare a role-based access control plan and permission matrices; define hosting options; assess Jupyter deployment feasibility.'},{t:'Collect users’ Tableau dashboards and business questions; produce user-journey narratives and training tiles; design hover tooltips and a component-to-outcome schematic.'},{t:'Enhance Bill Sentinel granularity with actionable flags, thresholds and drill-down paths; create sample data views (~3,000 records) and readable printouts and formulas.'},{t:'Resolve artifact-sharing issues; confirm a reliable channel; coordinate with Greg on design and UX.'},{t:'Assess authoritative sources for rate-case data; decide inclusion or deferral.'}]},
+ {t:'AI suggestions',c:'#e0a84e',k:[{t:'1. Formalise the data provenance and validation framework: source checklist, acceptance criteria, lineage linking ANNCR fields to Maximo/UTRMS.'},{t:'2. Clarify interim pipeline specifics from Tableau/EDW to the hub (formats, cadence, access) with owners and timelines.'},{t:'3. Specify parameterisation of the AI analyst (questions, thresholds, flags) from user stories; clarify ANCCR Analyst capabilities.'},{t:'4. Resolve sensitive-data compliance in Databricks/Advana with CDAO/NITC.'},{t:'5. Select and document a target hosting architecture and security controls; formalise roles and visibility at enterprise, installation and account levels.'},{t:'6. Confirm sources and calculation methodology for rate-pressure metrics; add to the dictionary and validation rules.'},{t:'7. Define the tariff identification and mapping workflow (libraries, parsers, constraints, QA steps).'},{t:'8. Determine the minimum viable feature set for initial release; avoid scope creep.'},{t:'9. Establish a structured onboarding curriculum and progressive-reveal criteria for v1.9.'},{t:'10. Compare Maximo raw vs curated EDW tables as source-of-truth options.'}]}
+]};
+var MMX={}; /* expanded node ids */
+function mmIds(n,id,acc){acc=acc||[];if(n.k){acc.push(id);n.k.forEach(function(c,i){mmIds(c,id+'.'+i,acc);});}return acc;}
+function mmRender(n,id,depth,color){
+ var kids=n.k||[]; var open=!!MMX[id];
+ if(!kids.length) return '<li><div class="nd leaf'+(n.x?' conc':'')+'">'+n.t+'</div></li>';
+ var c=n.c||color;
+ return '<li><button class="nd'+(depth===1?' br':'')+'" style="--c:'+c+'" data-mm="'+id+'" aria-expanded="'+open+'"><span class="tg">›</span><span>'+n.t+'</span><span class="ct">'+kids.length+'</span></button>'+(open?'<ul>'+kids.map(function(k,i){return mmRender(k,id+'.'+i,depth+1,c);}).join('')+'</ul>':'')+'</li>';
+}
+function stMind(){
+ var all=mmIds(MM,'r'); var n=Object.keys(MMX).length;
+ return '<p>The meeting record as a tree. Tap a node to open it; conclusions are shown in green. The map starts fully collapsed each time the tile opens.</p>'+
+ '<div class="mm-bar"><button data-mmall="1">Expand all</button><button data-mmall="0">Collapse all</button><span class="mini">'+n+' of '+all.length+' open</span></div>'+
+ '<div class="root">'+MM.t+'</div><ul class="mm">'+MM.k.map(function(k,i){return mmRender(k,'r.'+i,1,k.c);}).join('')+'</ul>';
+}
+
+/* learn tile and the analyst’s preset questions */
+function lnPath(){return '<p>The hub mirrors the Tableau views and the reconciliation steps PW6 and the FECs use now. Learning it is mostly recognising where things moved, not learning new ideas.</p><div class="path">'+[['0–5 min','See where the numbers come from','Open the Sample Dataset tile. Pick an account and a month and watch the bill rebuild itself from the formula.','dataset','Open Sample Dataset'],['5–10','Find the bill you would have flagged anyway','Bill Sentinel lists six planted errors in the sample. Each one is a case you have handled by hand: a double bill, a demand spike, a misapplied tariff class.','anomaly','Open Bill Sentinel'],['10–15','Check one tariff assignment','The Tariff Engine re-rates an account under every eligible schedule. Confirm it picks the one the FEC actually bills under — that single check is how the engine earns trust.','tariff','Open Tariff Engine'],['15–20','Look at the view you use every morning','Portfolio Command is the UTRMS roll-up with drill-downs. If your Tableau dashboard asks a question this view cannot answer, that is exactly the feedback the team needs.','portfolio','Open Portfolio Command'],['20–30','Ask the analyst a question you know the answer to','Test it against something you can verify. The analyst only answers from loaded data and tells you which module the number came from.','ai','Open ANCCR Analyst']].map(function(s){return '<div class="step"><div class="t">'+s[0]+'</div><div><strong>'+s[1]+'</strong><span>'+s[2]+'</span><button data-open="'+s[3]+'">'+s[4]+'</button></div></div>';}).join('')+'</div>';}
+function lnWhy(){return '<h3>Why it is worth the half hour</h3><p>The platform does not replace judgement; it removes the hours of lookup that come before judgement. A reconciliation that takes an afternoon in spreadsheets — pull the bill, find the tariff, re-rate it, compare, document — is one tap with the audit trail written for you.</p><p>It also protects you. Every figure carries its source and formula, so when a number is challenged you can show the derivation instead of re-doing the work.</p><h3>What it will not do</h3><ul><li>It will not act on a bill. It flags, explains and drafts; a person disputes.</li><li>It will not reach beyond approved sources. The list of allowed references (PUCs, vendor systems, EIA, S&amp;P, NOAA) is visible in Settings.</li><li>It will not hide its reasoning. If a score or forecast cannot be explained, it is not shown.</li></ul>';}
+var QS=[
+ ['Is the demo using real data?','What stakeholders asked first','<p>No. Every consumption, price and bill figure is generated from the rules shown in the Sample Dataset tile. Installation and utility names are real. The first real load is the Yorktown three-year dataset.</p>','dataset'],
+ ['Where does this number come from?','Traceability','<p>Tap it. Every figure on the hub carries its module code, and the module shows the formula and the records behind it. The production version adds a lineage column pointing to the Maximo and EDW tables.</p>','ledger'],
+ ['Which bills should I look at today?','Bill Sentinel','<p>Six bills score above the 0.35 threshold in the sample. The highest is the duplicate invoice on the Norfolk main-base electric account for November 2025, variance ratio about 2.0. The hypothesis is written next to each score.</p>','anomaly'],
+ ['Are we on the best tariff?','Tariff Engine','<p>The engine re-rates each account under every eligible schedule. For the main-base electric account the current General Service-4 is the best fit; the runner-up would cost more over twelve months. Confirm this against what the FEC bills under — that check validates the engine.</p>','tariff'],
+ ['What will electricity cost next year?','Rate Forecaster','<p>A P10–P90 band, not a point. In the sample, the P50 effective rate rises with the rider step from July 2025 and the band widens with fuel-drift volatility. Move the sliders to see which driver matters most.</p>','forecast'],
+ ['Can the AI reach outside our data?','Governance','<p>No. The analyst answers only from the loaded fabric, and the source allow-list — PUCs, vendor systems, EIA, S&amp;P, NOAA — is being added to Settings so that constraint is visible, not just promised.</p>','settings']];
+var ASKSEL=null;
+function aiAsk(){return '<p>These are the questions stakeholders asked in the 29 October session. Tap one to see how the analyst answers and which module the answer comes from.</p>'+QS.map(function(q,i){return '<button class="q" data-q="'+i+'">'+q[0]+'<small>'+q[1]+'</small></button>'+(ASKSEL===i?'<div class="ans"><div class="who">ANCCR Analyst · answered from '+q[3].toUpperCase()+'</div>'+q[2]+'<button class="q" style="margin:10px 0 0" data-open="'+q[3]+'">Open the module behind this answer</button></div>':'');}).join('');}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-q]');if(!b)return;var i=+b.dataset.q;ASKSEL=(ASKSEL===i)?null:i;var keep=shB.scrollTop;shB.innerHTML=aiAsk();shB.scrollTop=keep;buzz();});
+
+/* ─────────── data dictionary: fields, metrics and terms in one index ─────────── */
+var DD_METRICS=[
+ ['Anomaly score','metric','0–1 likelihood that a bill is wrong, from four signals combined so one strong signal is enough.','score = 0.75·max(signals) + 0.25·mean(signals)\nsignals: rate, units, demand, variance → each squashed to 0..1\nsquash(z) = 1 − exp(−max(0, z − 2.2) / 2.5)\nflagged when score ≥ 0.35','0–1',['anomaly','ledger','ai']],
+ ['Rate signal (z_rate)','metric','How far this bill’s unit rate sits from the account’s own history, in robust standard units.','z_rate = |rate − median(rates)| / MAD(rates)','z',['anomaly']],
+ ['Units signal (z_units)','metric','Consumption deviation after removing season or weather.','z_units = |deseasonalised units − median| / MAD\nor, with a weather model (R² ≥ 0.5): |ratio − median(ratio)| / max(MAD, 0.03)','z',['anomaly','forecast']],
+ ['Demand signal (z_demand)','metric','Billed kW deviation from the account’s history.','z_demand = |kW − median(kW)| / MAD(kW)','z',['anomaly','dr']],
+ ['Variance signal (z_variance)','metric','Gap between what was billed and what the tariff says it should be, scaled so 4% is one unit.','variance = (billed − re-rated) / re-rated\nz_variance = |variance| / 0.04','z',['anomaly','tariff']],
+ ['Hypothesis','metric','The plain-language reason attached to a flagged bill, chosen from the strongest signal and the sign of the variance.','variance > 0.5 → likely duplicate\nunits strong, variance small → meter multiplier or read\ndemand strong → demand spike, check ratchet\nvariance > 0 → billed above tariff\nvariance < 0 → estimated or partial read','text',['anomaly']],
+ ['Effective rate','metric','What the installation actually paid per unit over a period.','effective rate = cost ÷ units (trailing twelve months unless stated)','USD per unit',['portfolio','map','anomaly']],
+ ['Benchmark gap','metric','Effective rate against the state commercial average from EIA.','gap = effective ÷ benchmark − 1\ngap in dollars = (effective − benchmark) × units','%, USD',['map','ai']],
+ ['Rate-pressure index','metric','0–100 score of how much upward pressure a service territory is under.','pending = Σ estimated % of open and future-effective rate cases → clamp(pending/10%) × 35\nyoy = TTM rate ÷ prior-12 rate − 1 → clamp((yoy+2%)/10%) × 25\nvolatility = stdev(monthly log changes) × √12 → clamp(vol/28%) × 20\nmarket = EIA price now ÷ 13 months ago − 1 → scaled × 20\nindex = sum of the four','0–100',['map']],
+ ['Weather-normalised units','metric','Consumption adjusted to normal weather so a cold winter is not mistaken for a billing error.','fit units = a + b·HDD + c·CDD over history\nnormalised = units − b·(HDD − normal HDD) − c·(CDD − normal CDD)','units',['forecast','anomaly']],
+ ['Weather share','metric','Portion of a month’s deviation that weather explains.','share = (units − normalised units) ÷ units','%',['anomaly']],
+ ['Re-rated bill','metric','What the bill should have been under a given tariff.','expected = customer charge + Σ energy blocks + max(kW, ratchet × 12-month peak) × demand rate + Σ TOU periods + Σ riders','USD',['tariff','anomaly']],
+ ['Best-fit tariff','metric','The eligible schedule with the lowest re-rated total over twelve months.','best fit = argmin over eligible tariffs of Σ re-rated bills (12 months)','tariff',['tariff','ai']],
+ ['P10 / P50 / P90','metric','The 10th, 50th and 90th percentile of Monte Carlo paths — a band, not a point.','1. fit log(rate) = a + b·t; drop residuals > 3·MAD; refit\n2. add month-of-year seasonality\n3. N paths with fuel drift, inflation, rate-case steps, volatility\n4. report percentiles per month','USD per unit',['forecast','ai']],
+ ['Fuel drift','metric','Scenario driver: annual change applied to the fuel component of rate paths.','rate path × (1 + drift)^(t/12)','%/yr',['forecast']],
+ ['Independent government estimate (IGE)','metric','The estimate used to judge supplier offers.','IGE = forward strip + supplier margin + ancillaries','USD/MWh',['procure','bcase']],
+ ['DR baseline','metric','Expected load on an event day, from which curtailment is measured.','baseline = mean of the 5 highest of the last 10 non-event weekdays, same hours','kW',['dr']],
+ ['DR revenue','metric','Annual value of a curtailment program.','revenue = capacity pay × committed kW × months + energy pay × curtailed kWh','USD',['dr','bcase']],
+ ['Validated saving','metric','A saving or recovery accepted into the ledger with its source reference.','posted when the source module marks it validated; status open → validated → closed','USD',['ledger','bcase']],
+ ['Sales tax','metric','Tax line in the sample bills.','tax = subtotal × 1.25%','USD',['dataset','anomaly']]
+];
+var DD_TERMS=[
+ ['ACR code','The module number on every tile (ACR-01 to ACR-17). Every figure on the hub carries the code of the module that produced it.',['portfolio']],
+ ['AI-01 ANCCR Analyst','The natural-language analyst that answers from loaded data and names the module behind each number.',['ai']],
+ ['AMI','Advanced metering infrastructure: interval meters that report consumption every 30 minutes.',['dr','anomaly','data']],
+ ['Audit trail','The record of every platform action, written by ACR-10. Nothing is shown that is not logged.',['ledger']],
+ ['BIMS','The billing system whose invoice export shape the EDW line items follow.',['data']],
+ ['CAPRA / Ask Sage','One of the selectable AI runtimes reached through the launcher relay.',['settings','ai']],
+ ['CDD','Cooling degree-days: how far daily temperature sits above 65°F, summed over a month.',['forecast','anomaly','dataset']],
+ ['Commodity','Electric (EL), natural gas (NG), water (FW) or sewer (SE).',['portfolio','dataset']],
+ ['Data Drop Zone','ACR-08. Where CSV, JSON and tariff text enter; columns are mapped and known schemas recognised automatically.',['data']],
+ ['Demand (kW)','Peak power drawn in a billing period; billed separately from energy on commercial tariffs.',['tariff','dr','anomaly']],
+ ['Demand ratchet','A tariff rule that bills demand at no less than a share of the highest peak in the last twelve months.',['tariff']],
+ ['Deseasonalise','Divide each month by its calendar-month median ratio so January and July compare fairly.',['anomaly']],
+ ['EDW','The enterprise data warehouse holding curated utility tables; the interim feed reads from it.',['data','portfolio']],
+ ['EIA','U.S. Energy Information Administration; source of state average retail prices.',['map','forecast']],
+ ['ERD','Entity-relationship diagram: the lineage from Maximo and EDW tables to fields on screen. Being updated in the AI SharePoint.',['dictionary']],
+ ['FEC','Facilities Engineering Command: the regional organisation whose utilities managers receive the bills.',['portfolio','anomaly']],
+ ['HDD','Heating degree-days: how far daily temperature sits below 65°F, summed over a month.',['forecast','anomaly','dataset']],
+ ['Interim feed','The near-term data path agreed on 29 October: a Tableau extract or EDW query dropped into ACR-08 until a Databricks connector exists.',['data','strategy']],
+ ['J-Intake','The Advana/Databricks onboarding process, with CDAO and Command Analytics approvals.',['settings','strategy']],
+ ['Launcher relay','The local component that connects the hub to an AI runtime inside the enclave.',['settings','ai']],
+ ['Line item','One row of an invoice: a description, a quantity or an amount. A bill is several line items sharing a bill number.',['data','anomaly']],
+ ['MAD','Median absolute deviation: a spread measure that ignores outliers, used in every anomaly signal.',['anomaly','forecast']],
+ ['Maximo','The system of record from which EDW is loaded. Alt+I in Maximo shows the backing table for a field.',['data','dictionary']],
+ ['Modeled data','Figures generated from the rules in the Sample Dataset tile rather than loaded from a system.',['dataset']],
+ ['Monte Carlo','Running many random rate paths to produce a distribution instead of one forecast.',['forecast']],
+ ['Planted error','A deliberate mistake written into the sample so Bill Sentinel has something real to find.',['dataset','anomaly']],
+ ['Posture','Portfolio flag per installation: on track, watch, action.',['portfolio']],
+ ['Present mode','The v1.7 display setting that enlarges the hub for an 8–10 foot room.',['settings']],
+ ['Progressive disclosure','Showing a simpler hub first and revealing advanced modules through v1.9 settings toggles.',['settings','learn']],
+ ['Provenance','Where a number came from: table, field, formula and refresh. The gate for production use.',['dictionary','strategy']],
+ ['Rate case','A utility’s filing with the state commission to change its rates. Tracked outside any system today.',['tariff','map','strategy']],
+ ['Rate intervention','The Navy’s regulatory participation in rate cases; one of the product pillars.',['tariff','strategy']],
+ ['Rider','A separate tariff charge added to base rates, often with its own effective date.',['tariff','dataset']],
+ ['Seed','The number that starts the sample generator (160) so the same data is produced every time.',['dataset']],
+ ['Source allow-list','The references the analyst may draw on: PUCs, vendor systems, EIA, S&P, NOAA.',['settings','ai']],
+ ['SPID','Service point id: identifies the metered point an account bills.',['data']],
+ ['TDSX / Hyper','Tableau packaged data source and extract formats; one option for the interim feed.',['data','strategy']],
+ ['TOU','Time-of-use: tariffs with different energy prices by hour of day.',['tariff']],
+ ['TTM','Trailing twelve months.',['portfolio','map']],
+ ['URDB','OpenEI Utility Rate Database: public library of rate schedules.',['tariff']],
+ ['UTRMS','The utility rate management system whose Tableau views the hub emulates; pulls from Maximo and stores in EDW.',['portfolio','tariff']],
+ ['Yorktown dataset','Three years of Naval Weapons Station Yorktown bills and interval data: the agreed validation set.',['dataset','strategy']]
+];
+var DDX=null;
+function ddBuild(){
+ if(DDX) return DDX; var out=[]; var tbl2tile={};
+ Object.keys(COPY).forEach(function(id){var m=(COPY[id].data||'').match(/data-ds="([a-z]+)"/g)||[];m.forEach(function(x){var k=x.slice(9,-1);(tbl2tile[k]=tbl2tile[k]||[]);if(tbl2tile[k].indexOf(id)<0)tbl2tile[k].push(id);});});
+ Object.keys(DSETS).forEach(function(k){var t=DSETS[k];t.cols.forEach(function(c){if(!c.n||c.n==='…')return;out.push({n:c.n,kind:'field',def:c.d,type:c.t,unit:c.u,table:t.name,tkey:k,src:t.src,tiles:(tbl2tile[k]||[]).concat(['dataset'])});});});
+ DD_METRICS.forEach(function(m){out.push({n:m[0],kind:'metric',def:m[2],formula:m[3],unit:m[4],tiles:m[5]});});
+ DD_TERMS.forEach(function(t){out.push({n:t[0],kind:'term',def:t[1],tiles:t[2]});});
+ out.forEach(function(e,i){e.id='e'+i;e.key=e.n.replace(/^[^A-Za-z]+/,'').toLowerCase()||e.n.toLowerCase();e.L=e.key.charAt(0).toUpperCase()||'#';});
+ out.sort(function(a,b){return a.key<b.key?-1:a.key>b.key?1:0;});
+ DDX=out; return out;
+}
+var DDS={q:'',dir:'asc',kinds:null,tiles:null,open:{},lt:{}};
+var DD_KINDS=[['field','Fields'],['metric','Metrics'],['term','Terms']];
+function ddTileList(){var used={};ddBuild().forEach(function(e){e.tiles.forEach(function(t){used[t]=1;});});return TILES.filter(function(t){return used[t.id];}).map(function(t){return [t.id,t.label];});}
+function ddOn(sel,id){return sel===null||sel.indexOf(id)>=0;}
+function ddFilter(){var q=DDS.q.trim().toLowerCase();var out=ddBuild().filter(function(e){ if(!ddOn(DDS.kinds,e.kind))return false; if(DDS.tiles!==null&&!e.tiles.some(function(t){return DDS.tiles.indexOf(t)>=0;}))return false; if(q&&(e.n+' '+e.def+' '+(e.table||'')+' '+(e.formula||'')).toLowerCase().indexOf(q)<0)return false; return true;}); return DDS.dir==='desc'?out.slice().reverse():out;}
+function ddActive(){var n=0;if(DDS.kinds!==null)n++;if(DDS.tiles!==null)n++;return n;}
+function ddPop(){
+ var tl=ddTileList();
+ var grp=function(title,key,items){var sel=DDS[key];var allOn=sel===null;return '<h4>'+title+'<button data-ddall="'+key+'" aria-pressed="'+allOn+'">All '+(allOn?'on':'off')+'</button></h4><div class="ms">'+items.map(function(it){var on=ddOn(sel,it[0]);return '<button data-ddms="'+key+'" data-v="'+it[0]+'" aria-pressed="'+on+'"><i>'+(on?'✓':'')+'</i>'+it[1]+'</button>';}).join('')+'</div>';};
+ return grp('Kind','kinds',DD_KINDS)+grp('Tile','tiles',tl)+'<div class="pop-done"><button class="rs" data-ddreset="1">Reset</button><button class="ok" data-ddclose="1">Done</button></div>';
+}
+function ddAzIcon(){return DDS.dir==='asc'?'<svg viewBox="0 0 24 24"><text class="az" x="2" y="10">A</text><text class="az" x="2" y="21">Z</text><path d="M16 4v16M12.5 16.5L16 20l3.5-3.5"/></svg>':'<svg viewBox="0 0 24 24"><text class="az" x="2" y="10">Z</text><text class="az" x="2" y="21">A</text><path d="M16 20V4M12.5 7.5L16 4l3.5 3.5"/></svg>';}
+function ddSync(){var pop=document.getElementById('dd-pop');if(pop)pop.innerHTML=ddPop();var ico=document.querySelector('#sh-seg [data-ddfilt] .n');var a=ddActive();if(ico)ico.textContent=a?a:'';if(ico)ico.style.display=a?'':'none';var azb=document.querySelector('#sh-seg [data-ddsort]');if(azb){azb.innerHTML=ddAzIcon();azb.setAttribute('aria-label',DDS.dir==='asc'?'Sorted A to Z; tap for Z to A':'Sorted Z to A; tap for A to Z');}}
+document.addEventListener('click',function(e){var t;
+ if(t=e.target.closest('[data-ddclear]')){var inp0=document.getElementById('dd-in');DDS.q='';if(inp0){inp0.value='';inp0.focus();}ddShowList();}
+ else if(t=e.target.closest('[data-ddfilt]')){var sh=document.getElementById('sheet'),sg=document.getElementById('sh-seg'),pp=document.getElementById('dd-pop');pp.style.top=(sg.offsetTop+sg.offsetHeight+6)+'px';sh.classList.toggle('filt');ddSync();buzz();}
+ else if(t=e.target.closest('#sh-seg [data-ddsort]')){DDS.dir=DDS.dir==='asc'?'desc':'asc';ddSync();ddShowList();buzz();}
+ else if(t=e.target.closest('[data-ddall]')){var k=t.dataset.ddall;DDS[k]=(DDS[k]===null)?[]:null;ddSync();show(ddRender);buzz();}
+ else if(t=e.target.closest('[data-ddms]')){var k2=t.dataset.ddms,v=t.dataset.v,items=(k2==='kinds'?DD_KINDS:ddTileList()).map(function(x){return x[0];});var sel=DDS[k2]===null?items.slice():DDS[k2].slice();var i=sel.indexOf(v);if(i>=0)sel.splice(i,1);else sel.push(v);DDS[k2]=(sel.length===items.length)?null:sel;ddSync();show(ddRender);buzz();}
+ else if(t=e.target.closest('[data-ddreset]')){DDS.kinds=null;DDS.tiles=null;ddSync();show(ddRender);buzz();}
+ else if(t=e.target.closest('[data-ddclose]')){document.getElementById('sheet').classList.remove('filt');}
+});
+function tileName(id){var t=TILES.filter(function(x){return x.id===id;})[0];return t?t.label:id;}
+function ddRender(){
+ var all=ddBuild(), list=ddFilter();
+ var fsum=[]; if(DDS.kinds!==null)fsum.push(DDS.kinds.length?DDS.kinds.map(function(k){return DD_KINDS.filter(function(x){return x[0]===k;})[0][1];}).join(', '):'no kinds'); if(DDS.tiles!==null)fsum.push(DDS.tiles.length?DDS.tiles.length+' tile'+(DDS.tiles.length>1?'s':''):'no tiles');
+ var az=DDS.dir==='asc'?'<svg viewBox="0 0 24 24"><text class="az" x="2" y="10">A</text><text class="az" x="2" y="21">Z</text><path d="M16 4v16M12.5 16.5L16 20l3.5-3.5"/></svg>':'<svg viewBox="0 0 24 24"><text class="az" x="2" y="10">Z</text><text class="az" x="2" y="21">A</text><path d="M16 20V4M12.5 7.5L16 4l3.5 3.5"/></svg>';
+ var bar='<div class="dd-bar"><div class="dd-cnt">'+list.length+' of '+all.length+' entries'+(DDS.q?' matching “'+DDS.q+'”':'')+(fsum.length?' · '+fsum.join(' · '):'')+' · '+(DDS.dir==='asc'?'A → Z':'Z → A')+'</div></div>';
+ if(!list.length) return bar+'<p class="note">Nothing matches. '+(fsum.length?'Open the filter and switch a group back on, or ':'')+'clear the search.</p>';
+ var groups=[]; list.forEach(function(e){var g=groups[groups.length-1]; if(!g||g.L!==e.L){g={L:e.L,items:[]};groups.push(g);} g.items.push(e);});
+ var html='';
+ groups.forEach(function(g){ var open=!!DDS.q||!!DDS.lt[g.L];
+  html+='<button class="dd-letter" data-ddlt="'+g.L+'" aria-expanded="'+open+'"><span class="tg">›</span><span>'+g.L+'</span><span class="ct">'+g.items.length+'</span></button>';
+  if(!open) return;
+  g.items.forEach(function(e){
+  var o=!!DDS.open[e.id]; var meta=e.kind==='field'?e.table+(e.type?' · '+e.type:'')+(e.unit?' · '+e.unit:''):e.kind==='metric'?'calculated'+(e.unit?' · '+e.unit:''):'glossary';
+  html+='<div class="dd-e"><button data-dde="'+e.id+'" aria-expanded="'+o+'"><span class="kd '+e.kind+'">'+e.kind+'</span><span><div class="nm">'+e.n+'</div><div class="mt">'+meta+'</div></span><span class="tg">›</span></button>'+(o?'<div class="bd"><p>'+e.def+'</p>'+(e.src?'<p class="mini">Source: '+e.src+'</p>':'')+(e.formula?'<div class="formula">'+e.formula+'</div>':'')+(e.tkey?'<p class="mini">In table: <button class="pill ok" data-ds="'+e.tkey+'" style="margin-left:4px">'+e.table+'</button></p>':'')+'<div class="dd-tiles">'+e.tiles.map(function(t){return '<button data-open="'+t+'">'+tileName(t)+'</button>';}).join('')+'</div></div>':'')+'</div>';
+  });
+ });
+ return bar+html;
+}
+function ddList(){var keep=shB.scrollTop;shB.innerHTML=ddRender();shB.scrollTop=Math.min(keep,shB.scrollHeight);wireDD();}
+function ddShowList(){Array.prototype.forEach.call(shSeg.querySelectorAll('button[data-i]'),function(c){c.setAttribute('aria-selected','false');});show(ddRender);}
+function wireDD(){
+ var inp=document.getElementById('dd-in'); if(!inp) return;
+ var clr=inp.parentNode.querySelector('[data-ddclear]'); if(clr) clr.style.display=DDS.q?'':'none';
+ inp.oninput=function(){DDS.q=inp.value;if(clr)clr.style.display=DDS.q?'':'none';if(!shB.querySelector('.dd-bar')){ddShowList();}else ddList();};
+ inp.onfocus=function(){if(!shB.querySelector('.dd-bar'))ddShowList();};
+ shB.onclick=function(e){var t;
+  if(t=e.target.closest('[data-ddlt]')){var L=t.dataset.ddlt;if(DDS.lt[L])delete DDS.lt[L];else DDS.lt[L]=1;show(ddRender);buzz();}
+  else if(t=e.target.closest('[data-ddsort]')){DDS.dir=DDS.dir==='asc'?'desc':'asc';show(ddRender);buzz();}
+  else if(t=e.target.closest('[data-dde]')){var id=t.dataset.dde;if(DDS.open[id])delete DDS.open[id];else DDS.open[id]=1;show(ddRender);buzz();}
+ };
+}
+function ddAbout(){return '<p>One index of everything the hub names: every field in the nineteen sample tables, every calculated metric with its formula, and the vocabulary used on the tiles. It is the seed of the production data dictionary the 29 October meeting asked for.</p><h3>What each entry carries</h3><ul><li><strong>Fields</strong> — type, unit, description, the table and its source, and the tiles that read it.</li><li><strong>Metrics</strong> — the formula exactly as the code computes it, and where it is shown.</li><li><strong>Terms</strong> — plain-language definitions of hub and program vocabulary.</li></ul><h3>Still to add for production</h3><ul><li>Lineage column: the Maximo and EDW table and column behind each field (from the ERD review).</li><li>Refresh cadence and owner per table, from the interim ingestion contract.</li><li>Acceptance criteria per metric, from the Yorktown known-answer tests.</li></ul><p class="note">Entry counts: '+ddBuild().filter(function(e){return e.kind==='field';}).length+' fields · '+DD_METRICS.length+' metrics · '+DD_TERMS.length+' terms.</p>';}
+
+/* ─────────── sheet machinery ─────────── */
+var phone=document.getElementById('phone'),shB=document.getElementById('sh-b'),shSeg=document.getElementById('sh-seg');
+var CUR=null,TAB=null;
+function icoHTML(t){return '<div class="ico" style="--g1:'+t.g[0]+';--g2:'+t.g[1]+'"><svg viewBox="0 0 24 24">'+ICONS[t.id]+'</svg>'+(t.badge?'<span class="badge'+(t.badge==='start'?' new':'')+'">'+(t.badge==='start'?'new':t.badge)+'</span>':'')+'</div>';}
+function openTile(id){
+ var t=TILES.filter(function(x){return x.id===id;})[0]; if(!t) return; CUR=t;
+ document.getElementById('sh-ico').outerHTML=icoHTML(t).replace('class="ico"','class="ico" id="sh-ico"');
+ document.getElementById('sh-t').textContent=t.label;
+ var tabs;
+ if(id==='dataset'){ document.getElementById('sh-s').textContent='ACR-14 · how the demo data is derived'; tabs=[['Derivation',dsDerive],['Sources',dsSources],['Formulas',dsFormulas],['Planted errors',dsErrors]]; }
+ else if(id==='strategy'){ MMX={}; SST.sec={}; SST.sp={}; SST.rk={}; document.getElementById('sh-s').textContent='ACR-15 · 29 Oct analysis and course of action'; tabs=[['Summary',stSummary,'#e0a84e'],['Map',stMind,'#18d4f8'],['Meeting',stMeeting,'#8ab4d9'],['Gaps',stGaps,'#e05555'],['Plan',stPlan,'#a07cf0'],['Actions',stActions,'#4db88a']]; }
+ else if(id==='learn'){ document.getElementById('sh-s').textContent='ACR-16 · a thirty-minute path'; tabs=[['The path',lnPath],['Why bother',lnWhy]]; }
+ else if(id==='dictionary'){ DDS={q:'',dir:'asc',kinds:null,tiles:null,open:{},lt:{}}; document.getElementById('sh-s').textContent='ACR-17 · fields, metrics and terms'; tabs=[['',ddRender],['<svg class="big" viewBox="0 0 24 24" aria-label="About"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/></svg>',ddAbout,null,'end']]; }
+ else if(id==='ai'){ ASKSEL=null; var ca=COPY.ai; document.getElementById('sh-s').textContent=t.code+' · '+ca.sub; tabs=[['Ask',aiAsk],['What it does',function(){return ca.what;}],['Why it matters',function(){return ca.why;}],['Learn it',function(){return ca.learn;}],['Data',function(){return ca.data;}]]; }
+ else { var c=COPY[id]; document.getElementById('sh-s').textContent=t.code+' · '+c.sub; tabs=[['What it does',function(){return c.what;}],['Why it matters',function(){return c.why;}],['Learn it',function(){return c.learn;}],['Data',function(){return c.data;}]]; }
+ shSeg.innerHTML=tabs.map(function(x,i){ if(x[0]==='') return '<div class="seg-search" data-tab="'+i+'"><span class="mini">⌕</span><input id="dd-in" type="search" placeholder="Search" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Search the dictionary"><button data-ddclear="1" aria-label="Clear" style="display:none">✕</button></div>'; return '<button role="tab" data-i="'+i+'" aria-selected="'+(i===0)+'"'+(x[3]==='end'?' class="end"':'')+(x[2]?' style="--c:'+x[2]+'"':'')+(x[0].indexOf('aria-label="')>=0?' aria-label="'+x[0].split('aria-label="')[1].split('"')[0]+'"':'')+'>'+x[0]+'</button>';}).join('')+(id==='dictionary'?'<button class="seg-ico" data-ddfilt="1" aria-label="Filters"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg><span class="n" style="display:none"></span></button><button class="seg-ico" data-ddsort="1" aria-label="Sorted A to Z; tap for Z to A">'+ddAzIcon()+'</button>':'');
+ shSeg.onclick=function(e){var b=e.target.closest('button[data-i]');if(!b)return;Array.prototype.forEach.call(shSeg.querySelectorAll('button[data-i]'),function(c){c.setAttribute('aria-selected','false');});b.setAttribute('aria-selected','true');if(b.scrollIntoView)b.scrollIntoView({inline:'nearest',block:'nearest',behavior:'smooth'});show(tabs[+b.dataset.i][1]);};
+ show(tabs[0][1]); phone.classList.add('open'); buzz();
+}
+function show(fn){ shB.onclick=null; shB.onchange=null; var keep=shB.scrollTop; shB.innerHTML=fn(); if(CUR&&CUR.id==='dataset') wireDS(); if(CUR&&CUR.id==='strategy'){ wireST(); shB.scrollTop=keep; } else if(CUR&&CUR.id==='dictionary'){ wireDD(); shB.scrollTop=(fn===ddRender)?keep:0; } else shB.scrollTop=0; shTop.classList.toggle('on',shB.scrollTop>320); }
+function wireDS(){
+ var sel=document.getElementById('ds-acct'),rng=document.getElementById('ds-m'); if(!sel) return;
+ sel.onchange=function(){DSTATE.acct=sel.value;show(dsDerive);};
+ rng.oninput=function(){DSTATE.ym=MONTHS[+rng.value];document.getElementById('ds-ml').textContent=DSTATE.ym;draw();};
+ rng.onchange=function(){show(dsDerive);};
+ draw();
+}
+function draw(){
+ var cv=document.getElementById('ds-cv'); if(!cv) return; var ctx=cv.getContext('2d'); var W=cv.width,H=cv.height; ctx.clearRect(0,0,W,H);
+ var css=getComputedStyle(document.documentElement); var a=DS[DSTATE.acct]; var vals=MONTHS.map(function(ym){var b=a[ym];return b&&!b.skipped?b.total:null;});
+ var mx=Math.max.apply(null,vals.filter(function(v){return v!=null;}))*1.08; var pad=14; var x=function(i){return pad+i*(W-2*pad)/(MONTHS.length-1);}, y=function(v){return H-pad-(v/mx)*(H-2*pad);};
+ ctx.strokeStyle=css.getPropertyValue('--border2').trim(); ctx.lineWidth=1; [0.25,0.5,0.75].forEach(function(p){ctx.beginPath();ctx.moveTo(pad,y(mx*p));ctx.lineTo(W-pad,y(mx*p));ctx.stroke();});
+ ctx.strokeStyle=css.getPropertyValue('--cyan').trim(); ctx.lineWidth=2.5; ctx.beginPath(); var pen=false;
+ vals.forEach(function(v,i){ if(v==null){pen=false;return;} if(!pen){ctx.moveTo(x(i),y(v));pen=true;} else ctx.lineTo(x(i),y(v)); }); ctx.stroke();
+ ctx.fillStyle=css.getPropertyValue('--red').trim();
+ MONTHS.forEach(function(ym,i){var b=a[ym]; if(b&&(b.note||b.skipped)){ctx.beginPath();ctx.arc(x(i),b.skipped?H-pad:y(b.total),5,0,7);ctx.fill();}});
+ var i=MONTHS.indexOf(DSTATE.ym); ctx.strokeStyle=css.getPropertyValue('--amber').trim(); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x(i),pad); ctx.lineTo(x(i),H-pad); ctx.stroke();
+ ctx.fillStyle=css.getPropertyValue('--txf').trim(); ctx.font='18px '+css.getPropertyValue('--mono'); ctx.fillText(MONTHS[0],pad,H-2); ctx.textAlign='right'; ctx.fillText(MONTHS[MONTHS.length-1],W-pad,H-2); ctx.textAlign='left'; ctx.fillText('monthly bill total · red = planted error',pad,18);
+}
+function closeSheet(){ phone.classList.remove('open'); MMX={}; SST.sec={}; SST.sp={}; SST.rk={}; shTop.classList.remove('on'); document.getElementById('sheet').classList.remove('filt'); }
+var shTop=document.getElementById('sh-top');
+shB.addEventListener('scroll',function(){ shTop.classList.toggle('on',shB.scrollTop>320); },{passive:true});
+shTop.onclick=function(){ shB.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); buzz(); };
+document.getElementById('sh-x').onclick=closeSheet; document.getElementById('dim').onclick=closeSheet;
+/* swipe-down to dismiss on the grabber */
+(function(){var sy=null,sheet=document.getElementById('sheet');sheet.addEventListener('touchstart',function(e){if(shB.scrollTop>0&&e.target.closest('.sh-body'))return;sy=e.touches[0].clientY;},{passive:true});sheet.addEventListener('touchmove',function(e){if(sy==null)return;var d=e.touches[0].clientY-sy;if(d>0)sheet.style.transform='translateY('+d+'px)';},{passive:true});sheet.addEventListener('touchend',function(e){if(sy==null)return;var d=e.changedTouches[0].clientY-sy;sheet.style.transform='';if(d>110)closeSheet();sy=null;});})();
+
+/* ─────────── hub render, tabs, routing ─────────── */
+var tiles=document.getElementById('tiles');
+tiles.innerHTML=TILES.map(function(t){return '<button class="tile'+(t.ring?' ring':'')+'" role="listitem" data-open="'+t.id+'" aria-label="'+t.code+' '+t.label+'">'+icoHTML(t)+'<span class="lbl">'+t.label+'</span></button>';}).join('');
+document.addEventListener('click',function(e){var b=e.target.closest('[data-open]');if(b){openTile(b.dataset.open);}});
+
+/* ─────────── chrome bits ─────────── */
+function tick(){var d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false})+' local';} tick(); setInterval(tick,15000);
+document.getElementById('theme').onclick=function(){var r=document.documentElement;var dark=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);r.setAttribute('data-theme',dark?'light':'dark');try{localStorage.setItem('anccr-theme',dark?'light':'dark');}catch(e){} toast(dark?'Light theme':'Dark theme'); if(phone.classList.contains('open')&&CUR&&CUR.id==='dataset')draw();};
+try{var th=localStorage.getItem('anccr-theme');if(th)document.documentElement.setAttribute('data-theme',th);}catch(e){}
+function buzz(){try{if(navigator.vibrate)navigator.vibrate(8);}catch(e){}}
+var tt=null;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('on');},1600);}
+</script>
+</body>
+</html>
